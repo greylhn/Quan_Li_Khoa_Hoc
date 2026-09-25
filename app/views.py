@@ -27,6 +27,7 @@ def registerPage(request) :
     return render(request,'app/register.html',context)
 def term(request):
     context = {}
+<<<<<<< HEAD
     return render(request,'app/term.html',context)
 def courses(request):
     context ={}
@@ -43,3 +44,6 @@ def checkout(request):
 def teacher(request):
     context ={}
     return render(request,'app/teacher.html',context)
+=======
+    return render(request,'app/term.html',context)
+>>>>>>> 8360f940b388aad6f6f9dde40edf97520ced9106

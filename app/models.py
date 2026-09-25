@@ -1,7 +1,11 @@
 from django.db import models
+<<<<<<< HEAD
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.forms import UserCreationForm
+=======
+from django.contrib.auth.models import AbstractUser
+>>>>>>> 8360f940b388aad6f6f9dde40edf97520ced9106
 
 # Create your models here.
 # 3 vai tro trong he thong 
@@ -31,6 +35,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username}{self.get_role_display()}"
+<<<<<<< HEAD
 # DANH MUC 
 class Category (models.Model):
     name = models.CharField(max_length=100, unique=True,verbose_name="Ten danh muc")
@@ -40,6 +45,17 @@ class Category (models.Model):
         verbose_name_plural = "Categories"
     def __str__(self):
         return self.name 
+=======
+#DANH MUC
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True,blank=True)
+    parent = models.ForeignKey('self',on_delete=models.CASCADE,null=True,blank=True,related_name='subcategories')
+    class Meta :
+        verbose_name_plural = "Categories"
+    def __str__(self):
+        return self.name
+>>>>>>> 8360f940b388aad6f6f9dde40edf97520ced9106
 # KHOA HOC
 class Course(models.Model):
     # tieu de 
@@ -49,6 +65,7 @@ class Course(models.Model):
     description = models.TextField(verbose_name="Mô tả chi tiết")
     price = models.DecimalField(max_digits=10,decimal_places=2,default=0.00,verbose_name="Gia (VND)")
     thumbnail = models.ImageField(null=True,blank=True)
+<<<<<<< HEAD
     instructor = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -79,11 +96,59 @@ class Chapter (models.Model) :
     )
     title = models.CharField(max_length=200,verbose_name="Ten Chuong")
     order = models.PositiveIntegerField(default=1,verbose_name="Thu tu hien thi")
+=======
+# CAC MOI QUAN HE 
+    instructor = models.ForeignKey(
+        User,
+        on_delete= models.CASCADE,
+        related_name='courses_created',
+        limit_choices_to={'role':User.Role.INSTRUCTOR},
+        verbose_name="Giang Vien",
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='courses',
+        verbose_name="Danh Muc"
+    )
+    is_published = models.BooleanField(default=False,verbose_name="Da Xuat Ban")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.title
+# CHUONG HOC 
+class Chapter(models.Model):
+    course = models.ForeignKey(Course,on_delete=models.CASCADE,related_name='chapters')
+    title = models.CharField(max_length=200,verbose_name="Tên Chương")
+    order = models.PositiveIntegerField(default = 1 , verbose_name = "Thu tu hien thi")
+
+    class Meta :
+        ordering = ['order']
+    def __str__(self):
+        return f"{self.course.title} - {self.order}:{self.title}"
+# BAI HOC 
+class Lesson(models.Model):
+    class Lessontype(models.TextChoices):
+        VIDEO = 'VIDEO', 'Video'
+        ARTICLE = 'ARTICLE', 'Bài đọc'
+        DOCUMENT = 'DOCUMENT', 'Tài liệu PDF/File'
+    chapter = models.ForeignKey(Chapter,on_delete=models.CASCADE,related_name='lessons')
+    title = models.CharField(max_length=200,verbose_name='Ten Bai Hoc')
+    lesson_type = models.CharField(max_length=10, choices=Lessontype.choices,default=Lessontype.VIDEO)
+
+    video_url = models.URLField(blank=True,null=True,verbose_name='link bai hoc')
+    content = models.TextField(blank=True,null=True,verbose_name='Noi dung van ban')
+    attachment = models.FileField(blank=True,null=True,verbose_name="File dinh kem")
+    order = models.PositiveIntegerField(default=1 , verbose_name="Thu tu bai hoc")
+    is_preview = models.BooleanField(default= False , verbose_name="Cho Phep hoc thu")
+>>>>>>> 8360f940b388aad6f6f9dde40edf97520ced9106
 
     class Meta :
         ordering = ['order']
 
     def __str__(self):
+<<<<<<< HEAD
         return f"{self.course.title}-Chương {self.order}: {self.title}"
 
 # BAI HOC 
@@ -113,3 +178,6 @@ class Lesson (models.Model):
         ordering = ['order']
     def __str__(self):
         return f"{self.chapter.title}-Bài {self.order}: {self.title}"
+=======
+        return f"{self.chapter.title}-Bai {self.order}: {self.title}"
+>>>>>>> 8360f940b388aad6f6f9dde40edf97520ced9106
