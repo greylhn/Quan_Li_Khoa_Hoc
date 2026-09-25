@@ -1,0 +1,76 @@
+{% load static %}
+<header class="edu-navbar-wrapper sticky-top">
+  <div class="container-xl">
+    <nav class="navbar navbar-expand-lg py-2">
+      <!-- Logo & Brand -->
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <div class="brand-logo-icon">
+          <i data-lucide="graduation-cap"></i>
+        </div>
+        <span class="brand-name">EduPro</span>
+      </a>
+
+      <!-- Mobile Toggle Button -->
+      <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="collapse" data-bs-target="#eduNavbarNav" aria-controls="eduNavbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <i data-lucide="menu"></i>
+      </button>
+
+      <!-- Nav Menu & Actions -->
+      <div class="collapse navbar-collapse" id="eduNavbarNav">
+        <!-- Main Navigation Links -->
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1 gap-xl-2">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#courses">Khóa học</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#instructors">Giảng viên</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#why-us">Về chúng tôi</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#footer-contact">Liên hệ</a>
+          </li>
+        </ul>
+
+        <!-- Right Side: Search, Notification, Auth -->
+        <div class="d-flex align-items-center flex-wrap gap-2 gap-lg-3 mt-3 mt-lg-0">
+          <!-- Mini Search -->
+          <div class="nav-search-box d-none d-md-flex align-items-center">
+            <i data-lucide="search" class="nav-search-icon"></i>
+            <input type="text" class="nav-search-input" placeholder="Tìm khóa học, giảng viên..." />
+          </div>
+
+          <!-- Notification Bell -->
+          <div class="nav-notification-btn position-relative" title="Thông báo">
+            <i data-lucide="bell" class="bell-icon"></i>
+            <span class="notification-badge">1</span>
+          </div>
+
+          <!-- Auth Buttons -->
+          {% if user.is_authenticated %}
+            <div class="dropdown">
+              <button class="btn btn-outline-primary rounded-pill px-3 py-1 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-target="#userMenu" data-bs-toggle="dropdown">
+                <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+                <span>{{ user.username }}</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" id="userMenu">
+                <li><a class="dropdown-item" href="#">Khóa học của tôi</a></li>
+                <li><a class="dropdown-item" href="#">Tài khoản cá nhân</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'login' %}">Đăng xuất</a></li>
+              </ul>
+            </div>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-nav-login">Đăng nhập</a>
+            <a href="{% url 'register' %}" class="btn btn-nav-register">Đăng ký</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
