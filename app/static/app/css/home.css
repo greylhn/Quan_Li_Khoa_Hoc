@@ -1,0 +1,80 @@
+/* Google Font */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #1e293b;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bs-primary: #1a56db;
+  --bs-primary-rgb: 26, 86, 219;
+}
+
+.btn-primary {
+  background-color: #1a56db;
+  border-color: #1a56db;
+}
+
+.btn-primary:hover {
+  background-color: #1e429f;
+  border-color: #1e429f;
+}
+
+/* Header Navbar */
+.nav-search input {
+  width: 260px;
+  font-size: 0.9rem;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #f0f5ff 0%, #ffffff 100%);
+}
+
+.hero-img {
+  max-height: 420px;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Cards Hover Animation */
+.course-card,
+.category-card,
+.instructor-card {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.course-card:hover,
+.category-card:hover,
+.instructor-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(26, 86, 219, 0.12) !important;
+}
+
+.course-card img {
+  height: 220px;
+  object-fit: cover;
+}
+
+/* Category Icon Box */
+.icon-box {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-purple {
+  background-color: #7e3af2 !important;
+}
+
+.fw-extrabold {
+  font-weight: 800;
+}
