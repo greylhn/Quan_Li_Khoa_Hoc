@@ -41,38 +41,37 @@ body {
   width: 100%;
 }
 
-/* Cards Hover Animation */
-.course-card,
-.category-card,
-.instructor-card {
+/* Course Card Hover Animation & Sizes for 4 Columns */
+.course-card {
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
 }
 
-.course-card:hover,
-.category-card:hover,
-.instructor-card:hover {
+.course-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 24px rgba(26, 86, 219, 0.12) !important;
 }
 
 .course-card img {
-  height: 220px;
+  height: 160px;
   object-fit: cover;
 }
 
-/* Category Icon Box */
-.icon-box {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.6rem;
 }
 
-.bg-purple {
-  background-color: #7e3af2 !important;
+.fs-7 {
+  font-size: 0.8rem;
+}
+
+.x-small {
+  font-size: 0.75rem;
 }
 
 .fw-extrabold {

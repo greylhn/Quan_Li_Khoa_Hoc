@@ -21,18 +21,14 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!--  CSS  -->
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'app/css/home.css' %}" />
   </head>
   <body>
     <!-- NAVBAR HEADER -->
-    <nav
-      class="navbar navbar-expand-lg bg-white sticky-top py-2 border-bottom shadow-sm"
-    >
+    <nav class="navbar navbar-expand-lg bg-white sticky-top py-2 border-bottom shadow-sm">
       <div class="container">
-        <a
-          class="navbar-brand d-flex align-items-center fw-bold text-primary fs-4"
-          href="/"
-        >
+        <a class="navbar-brand d-flex align-items-center fw-bold text-primary fs-4" href="/">
           <i class="bi bi-mortarboard-fill me-2 fs-3"></i> EduPro
         </a>
         <button
@@ -49,14 +45,9 @@
               <a class="nav-link active text-primary" href="/">Trang chủ</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="{% url "courses" %}">Khóa học</a>
+              <a class="nav-link text-secondary" href="{% url 'courses' %}">Khóa học</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="{% url "teacher" %}">Giảng viên</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">Về chúng tôi</a>
-            </li>
             <li class="nav-item">
               <a class="nav-link text-secondary" href="#">Liên hệ</a>
             </li>
@@ -67,37 +58,56 @@
             <input
               type="text"
               class="form-control rounded-pill bg-light ps-4 pe-5 border-0"
-              placeholder="Tìm khóa học, giảng viên..."
+              placeholder="Tìm khóa học..."
             />
-            <i
-              class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"
-            ></i>
+            <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
           </div>
 
-          <div class="d-flex align-items-center gap-2">
-            <a
-              href="{% url "checkout" %}"
-              class="btn btn-light position-relative rounded-circle me-2 p-2"
-            >
-              <i class="bi bi-cart fs-5"></i>
-              <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.65rem"
-                >0</span
+          <!-- USER PROFILE / AUTH BUTTONS -->
+          {% if user.is_authenticated %}
+            <div class="dropdown">
+              <a
+                href="#"
+                class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle fw-semibold"
+                id="userDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
-            </a>
-            <a href="/login/" class="btn btn-outline-primary rounded-pill px-3"
-              >Đăng nhập</a
-            >
-            <a href="/register/" class="btn btn-primary rounded-pill px-3"
-              >Đăng ký</a
-            >
-          </div>
+                <img
+                  src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username }}&background=1a56db&color=fff&rounded=true"
+                  alt="Avatar"
+                  width="38"
+                  height="38"
+                  class="rounded-circle me-2 object-fit-cover"
+                />
+                <span>{{ user.get_full_name|default:user.username }}</span>
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 rounded-3" aria-labelledby="userDropdown">
+                <li>
+                  <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+                    <i class="bi bi-person-circle fs-5 text-primary"></i> Xem trang cá nhân
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider my-1" /></li>
+                <li>
+                  <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger" href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-right fs-5"></i> Đăng xuất
+                  </a>
+                </li>
+              </ul>
+            </div>
+          {% else %}
+            <div class="d-flex align-items-center gap-2">
+              <a href="/login/" class="btn btn-outline-primary rounded-pill px-3">Đăng nhập</a>
+              <a href="/register/" class="btn btn-primary rounded-pill px-3">Đăng ký</a>
+            </div>
+          {% endif %}
         </div>
       </div>
     </nav>
 
-    <!-- Main Content Block -->
+    <!-- Main Content Blocks -->
     {% block main-content %}{% endblock main-content %}
     {% block register %}{% endblock register %}
     {% block login %}{% endblock login %}
@@ -105,93 +115,37 @@
     {% block detail-courses %}{% endblock detail-courses %}
     {% block learning %}{% endblock learning %}
     {% block checkout %}{% endblock checkout %}
-    {% block teacher %}{% endblock teacher %}
+
     <!-- FOOTER -->
     <footer class="footer bg-dark text-white pt-5 pb-3 mt-5">
       <div class="container">
-        <div class="row g-4 mb-4">
-          <div class="col-lg-4 col-md-6">
+        <div class="row g-4 mb-4 justify-content-between">
+          <div class="col-lg-6 col-md-6">
             <div class="d-flex align-items-center fw-bold fs-4 text-white mb-3">
               <i class="bi bi-mortarboard-fill me-2 text-primary"></i> EduPro
             </div>
             <p class="text-secondary small">
-              Học mọi lúc - Thành công mọi nơi. Nền tảng học tập trực tuyến hàng
-              đầu Việt Nam.
+              Học mọi lúc - Thành công mọi nơi. Nền tảng học tập trực tuyến hàng đầu Việt Nam.
             </p>
             <div class="d-flex gap-2">
-              <a
-                href="#"
-                class="btn btn-sm btn-outline-secondary rounded-circle"
-                ><i class="bi bi-facebook"></i
-              ></a>
-              <a
-                href="#"
-                class="btn btn-sm btn-outline-secondary rounded-circle"
-                ><i class="bi bi-youtube"></i
-              ></a>
-              <a
-                href="#"
-                class="btn btn-sm btn-outline-secondary rounded-circle"
-                ><i class="bi bi-linkedin"></i
-              ></a>
+              <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-youtube"></i></a>
+              <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-linkedin"></i></a>
             </div>
           </div>
-          <div class="col-lg-2 col-md-6">
+          <div class="col-lg-3 col-md-6">
             <h6 class="fw-bold mb-3">Liên kết nhanh</h6>
             <ul class="list-unstyled text-secondary small lh-lg">
               <li>
-                <a href="#" class="text-decoration-none text-secondary"
-                  >Trang chủ</a
-                >
+                <a href="/" class="text-decoration-none text-secondary">Trang chủ</a>
               </li>
               <li>
-                <a href="{% url "courses" %}" class="text-decoration-none text-secondary"
-                  >Khóa học</a
-                >
+                <a href="{% url 'courses' %}" class="text-decoration-none text-secondary">Khóa học</a>
               </li>
               <li>
-                <a href="{% url "teacher" %}" class="text-decoration-none text-secondary"
-                  >Giảng viên</a
-                >
-              </li>
-              <li>
-                <a href="#" class="text-decoration-none text-secondary"
-                  >Liên hệ</a
-                >
+                <a href="#" class="text-decoration-none text-secondary">Liên hệ</a>
               </li>
             </ul>
-          </div>
-          <div class="col-lg-2 col-md-6">
-            <h6 class="fw-bold mb-3">Hỗ trợ</h6>
-            <ul class="list-unstyled text-secondary small lh-lg">
-              <li>
-                <a href="#" class="text-decoration-none text-secondary">FAQ</a>
-              </li>
-              <li>
-                <a href="#" class="text-decoration-none text-secondary"
-                  >Chính sách bảo mật</a
-                >
-              </li>
-              <li>
-                <a href="#" class="text-decoration-none text-secondary"
-                  >Điều khoản dịch vụ</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <h6 class="fw-bold mb-3">Đăng ký nhận tin</h6>
-            <p class="text-secondary small">
-              Nhận thông tin khóa học mới nhất và ưu đãi hấp dẫn.
-            </p>
-            <div class="input-group">
-              <input
-                type="email"
-                class="form-control"
-                placeholder="Nhập email của bạn..."
-              />
-              <button class="btn btn-primary" type="button">Đăng ký</button>
-            </div>
           </div>
         </div>
         <hr class="border-secondary" />

@@ -1,7 +1,9 @@
 {% extends "app/base.html" %} 
+{% load socialaccount %}
 {% load static %} 
+
 {% block login %}
-<!--  CSS cá nhân -->
+<!-- CSS cá nhân -->
 <link rel="stylesheet" href="{% static 'app/css/login.css' %}" />
 
 <div class="auth-body">
@@ -87,24 +89,26 @@
           </p>
         </div>
 
-        {% if messages %} {% for message in messages %}
-        <div
-          class="error-message"
-          style="
-            color: #ef4444;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 0.875rem;
-          "
-        >
-          {{ message }}
-        </div>
-        {% endfor %} {% endif %}
+        {% if messages %}
+          {% for message in messages %}
+            <div
+              class="error-message"
+              style="
+                color: #ef4444;
+                margin-bottom: 15px;
+                text-align: center;
+                font-size: 0.875rem;
+              "
+            >
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
 
         <form id="loginForm" method="POST">
           {% csrf_token %}
 
-          <!-- Input Email (Đã đổi class thành form-group-custom) -->
+          <!-- Input Email -->
           <div class="form-group-custom">
             <label for="email">Email hoặc số điện thoại</label>
             <div class="input-wrapper">
@@ -119,7 +123,7 @@
             </div>
           </div>
 
-          <!-- Input Mật khẩu (Đã đổi class thành form-group-custom) -->
+          <!-- Input Mật khẩu -->
           <div class="form-group-custom">
             <label for="password">Mật khẩu</label>
             <div class="input-wrapper">
@@ -193,10 +197,6 @@
             Đăng nhập bằng Facebook
           </button>
         </div>
-      </div>
-
-      <div class="bottom-link">
-        Chưa có tài khoản? <a href="{% url 'register' %}">Đăng ký ngay →</a>
       </div>
     </div>
   </div>
