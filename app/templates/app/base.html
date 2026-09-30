@@ -74,25 +74,37 @@
             ></i>
           </div>
 
-          <div class="d-flex align-items-center gap-2">
-            <a
-              href="{% url "checkout" %}"
-              class="btn btn-light position-relative rounded-circle me-2 p-2"
-            >
-              <i class="bi bi-cart fs-5"></i>
-              <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.65rem"
-                >0</span
+          <<div class="d-flex align-items-center gap-2">
+              <a
+                href="{% url "checkout" %}"
+                class="btn btn-light position-relative rounded-circle me-2 p-2"
               >
-            </a>
-            <a href="/login/" class="btn btn-outline-primary rounded-pill px-3"
-              >Đăng nhập</a
-            >
-            <a href="/register/" class="btn btn-primary rounded-pill px-3"
-              >Đăng ký</a
-            >
-          </div>
+                <i class="bi bi-cart fs-5"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.65rem"
+                  >0</span
+                >
+              </a>
+
+              {% if request.user.is_authenticated %}
+                <!-- NẾU ĐÃ ĐĂNG NHẬP: Hiển thị tên và nút Đăng xuất -->
+                <span class="fw-semibold text-dark me-2 small">
+                  Chào, {{ request.user.first_name|default:request.user.username }}
+                </span>
+                
+                <form action="{% url 'logout' %}" method="POST" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger rounded-pill px-3">
+                    <i class="bi bi-box-arrow-right me-1"></i> Đăng xuất
+                  </button>
+                </form>
+              {% else %}
+                <!-- NẾU CHƯA ĐĂNG NHẬP: Hiển thị Đăng nhập và Đăng ký -->
+                <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill px-3">Đăng nhập</a>
+                <a href="{% url 'register' %}" class="btn btn-primary rounded-pill px-3">Đăng ký</a>
+              {% endif %}
+            </div>
         </div>
       </div>
     </nav>

@@ -1,4 +1,5 @@
 {% extends "app/base.html" %} 
+{% load socialaccount %}
 {% load static %} 
 {% block login %}
 <!--  CSS cá nhân -->
@@ -87,24 +88,27 @@
           </p>
         </div>
 
-        {% if messages %} {% for message in messages %}
-        <div
-          class="error-message"
-          style="
-            color: #ef4444;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 0.875rem;
-          "
-        >
-          {{ message }}
-        </div>
-        {% endfor %} {% endif %}
+        {% if messages %} 
+          {% for message in messages %}
+          <div
+            class="error-message"
+            style="
+              color: #ef4444;
+              margin-bottom: 15px;
+              text-align: center;
+              font-size: 0.875rem;
+            "
+          >
+            {{ message }}
+          </div>
+          {% endfor %} 
+        {% endif %}
 
+        <!-- FORM ĐĂNG NHẬP TRUYỀN THỐNG -->
         <form id="loginForm" method="POST">
           {% csrf_token %}
 
-          <!-- Input Email (Đã đổi class thành form-group-custom) -->
+          <!-- Input Email/Username -->
           <div class="form-group-custom">
             <label for="email">Email hoặc số điện thoại</label>
             <div class="input-wrapper">
@@ -119,7 +123,7 @@
             </div>
           </div>
 
-          <!-- Input Mật khẩu (Đã đổi class thành form-group-custom) -->
+          <!-- Input Mật khẩu -->
           <div class="form-group-custom">
             <label for="password">Mật khẩu</label>
             <div class="input-wrapper">
@@ -160,9 +164,10 @@
           <span>Hoặc</span>
         </div>
 
+        <!-- ĐĂNG NHẬP MẠNG XÃ HỘI (CHỈ GIỮ LẠI GOOGLE) -->
         <div class="social-login">
-          <button class="btn-social" type="button">
-            <svg class="social-icon" viewBox="0 0 24 24">
+          <a href="{% provider_login_url 'google' %}" class="btn-social" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+            <svg class="social-icon" viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 10px;">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -181,17 +186,7 @@
               />
             </svg>
             Đăng nhập bằng Google
-          </button>
-
-          <button class="btn-social" type="button">
-            <svg class="social-icon" viewBox="0 0 24 24">
-              <path
-                fill="#1877F2"
-                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-              />
-            </svg>
-            Đăng nhập bằng Facebook
-          </button>
+          </a>
         </div>
       </div>
 
