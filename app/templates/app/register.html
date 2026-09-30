@@ -1,6 +1,108 @@
 {% extends "app/base.html" %} 
+{% load socialaccount %}
 {% load static %} 
+
 {% block register %}
+
+<style>
+    /* Ẩn phần Footer màu đen */
+    footer, .footer {
+        display: none !important;
+    }
+
+    /* CSS cho bước chọn Role */
+    .role-selector {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .role-card {
+        display: flex;
+        align-items: center;
+        padding: 14px 18px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: #fff;
+    }
+
+    .role-card:hover {
+        border-color: #3b82f6;
+        background-color: #f0f7ff;
+        transform: translateY(-2px);
+    }
+
+    .role-card.active {
+        border-color: #2563eb;
+        background-color: #eff6ff;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+
+    .role-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background-color: #e0e7ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 14px;
+        flex-shrink: 0;
+    }
+
+    .role-info h4 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .role-info p {
+        margin: 2px 0 0 0;
+        font-size: 0.8rem;
+        color: #6b7280;
+    }
+
+    .btn-next-step {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .btn-next-step:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-back-step {
+        background: none;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.875rem;
+        margin-bottom: 15px;
+        padding: 0;
+    }
+
+    .btn-back-step:hover {
+        color: #1f2937;
+    }
+</style>
+
 <!-- CSS dành riêng cho trang Register -->
 <link rel="stylesheet" href="{% static 'app/css/register.css' %}" />
 
@@ -75,151 +177,274 @@
     </div>
 
     <!-- ==========================================
-         BÊN PHẢI: FORM ĐĂNG KÝ
+         BÊN PHẢI: FORM ĐĂNG KÝ 2 BƯỚC
          ========================================== -->
     <div class="form-section">
       <div class="form-wrapper">
-        <div class="form-header">
-          <h3>Đăng ký tài khoản mới</h3>
-          <p>Chào mừng bạn! Vui lòng điền thông tin để tạo tài khoản mới.</p>
-        </div>
 
-        {% if messages %} {% for message in messages %}
-        <div
-          class="error-message"
-          style="
-            color: #ef4444;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 0.875rem;
-          "
-        >
-          {{ message }}
-        </div>
-        {% endfor %} {% endif %}
-
-        <form id="registerForm" method="POST">
-          {% csrf_token %}
-
-          <!-- Input Họ và tên -->
-          <div class="form-group-custom">
-            <label for="fullname">Họ và tên</label>
-            <div class="input-wrapper">
-              <i data-lucide="user" class="input-icon"></i>
-              <input
-                type="text"
-                id="fullname"
-                name="name"
-                placeholder="Họ và tên"
-                required
-              />
-            </div>
+        <!-- BƯỚC 1: CHỌN VAI TRÒ -->
+        <div id="step-role-selection">
+          <div class="form-header">
+            <h3>Chọn loại tài khoản</h3>
+            <p>Vui lòng chọn vai trò của bạn trên hệ thống EduPro.</p>
           </div>
 
-          <!-- Input Email hoặc số điện thoại -->
-          <div class="form-group-custom">
-            <label for="email">Email hoặc số điện thoại</label>
-            <div class="input-wrapper">
-              <i data-lucide="mail" class="input-icon"></i>
-              <input
-                type="text"
-                id="email"
-                name="username"
-                placeholder="Email hoặc số điện thoại"
-                required
-              />
-            </div>
-          </div>
-
-          <!-- Hàng 2 ô Mật khẩu nằm song song -->
-          <div class="form-row-2col">
-            <!-- Mật khẩu -->
-            <div class="form-group-custom">
-              <label for="password">Mật khẩu</label>
-              <div class="input-wrapper">
-                <i data-lucide="lock" class="input-icon"></i>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Mật khẩu"
-                  required
-                />
-                <button type="button" class="toggle-password">
-                  <i data-lucide="eye"></i>
-                </button>
+          <div class="role-selector">
+            <!-- Thẻ Học sinh -->
+            <div class="role-card" onclick="selectRole('student', this)">
+              <div class="role-icon"><i data-lucide="user"></i></div>
+              <div class="role-info">
+                <h4>Sinh viên</h4>
+                <p>Tham gia các khóa học và thi trực tuyến</p>
               </div>
             </div>
 
-            <!-- Nhập lại mật khẩu -->
-            <div class="form-group-custom">
-              <label for="confirm_password">Nhập lại mật khẩu</label>
-              <div class="input-wrapper">
-                <i data-lucide="lock" class="input-icon"></i>
-                <input
-                  type="password"
-                  id="confirm_password"
-                  name="confirm_password"
-                  placeholder="Nhập lại mật khẩu"
-                  required
-                />
-                <button type="button" class="toggle-password">
-                  <i data-lucide="eye"></i>
-                </button>
+            <!-- Thẻ Giáo viên -->
+            <div class="role-card" onclick="selectRole('teacher', this)">
+              <div class="role-icon"><i data-lucide="book-open"></i></div>
+              <div class="role-info">
+                <h4>Giảng viên</h4>
+                <p>Tạo khóa học, quản lý bài giảng và học viên</p>
+              </div>
+            </div>
+
+            <!-- Thẻ Quản trị viên -->
+            <div class="role-card" onclick="selectRole('admin', this)">
+              <div class="role-icon"><i data-lucide="shield-check"></i></div>
+              <div class="role-info">
+                <h4>Quản trị viên (Admin)</h4>
+                <p>Quản lý toàn bộ hệ thống và người dùng</p>
               </div>
             </div>
           </div>
 
-          <!-- Submit Button -->
-          <button type="submit" class="btn-submit">
-            <i data-lucide="user-plus"></i> Tạo tài khoản ngay
-          </button>
-        </form>
-
-        <div class="divider">
-          <span>Hoặc</span>
-        </div>
-
-        <!-- Social Buttons -->
-        <div class="social-login">
-          <button class="btn-social" type="button">
-            <svg class="social-icon" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-              />
-            </svg>
-            Tạo tài khoản với Google
+          <button id="btnContinue" class="btn-next-step" disabled onclick="goToRegisterForm()">
+            Tiếp tục đăng ký →
           </button>
 
-          <button class="btn-social" type="button">
-            <svg class="social-icon" viewBox="0 0 24 24">
-              <path
-                fill="#1877F2"
-                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-              />
-            </svg>
-            Tạo tài khoản với Facebook
-          </button>
+          <div class="bottom-link" style="margin-top: 20px;">
+            Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập ngay →</a>
+          </div>
         </div>
 
-        <div class="bottom-link">
-          Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập ngay →</a>
+        <!-- BƯỚC 2: FORM ĐIỀN THÔNG TIN -->
+        <div id="step-register-form" style="display: none;">
+          <button type="button" class="btn-back-step" onclick="goToRoleSelection()">
+            ← Chọn lại vai trò
+          </button>
+
+          <div class="form-header">
+            <h3>Đăng ký tài khoản <span id="display-role-name" style="color: #2563eb;"></span></h3>
+            <p>Chào mừng bạn! Vui lòng điền thông tin để tạo tài khoản mới.</p>
+          </div>
+
+          {% if messages %} 
+            {% for message in messages %}
+            <div
+              class="error-message"
+              style="color: #ef4444; margin-bottom: 15px; text-align: center; font-size: 0.875rem;"
+            >
+              {{ message }}
+            </div>
+            {% endfor %} 
+          {% endif %}
+
+          <form id="registerForm" method="POST">
+            {% csrf_token %}
+
+            <!-- Input ẩn lưu giá trị vai trò chọn (student / teacher / admin) -->
+            <input type="hidden" id="selected_role" name="role" value="" />
+
+            <!-- Input Họ và tên -->
+            <div class="form-group-custom">
+              <label for="fullname">Họ và tên</label>
+              <div class="input-wrapper">
+                <i data-lucide="user" class="input-icon"></i>
+                <input
+                  type="text"
+                  id="fullname"
+                  name="name"
+                  placeholder="Họ và tên"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Input Email hoặc số điện thoại -->
+            <div class="form-group-custom">
+              <label for="email">Email hoặc số điện thoại</label>
+              <div class="input-wrapper">
+                <i data-lucide="mail" class="input-icon"></i>
+                <input
+                  type="text"
+                  id="email"
+                  name="username"
+                  placeholder="Email hoặc số điện thoại"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Hàng 2 ô Mật khẩu nằm song song -->
+            <div class="form-row-2col">
+              <!-- Mật khẩu -->
+              <div class="form-group-custom">
+                <label for="password">Mật khẩu</label>
+                <div class="input-wrapper">
+                  <i data-lucide="lock" class="input-icon"></i>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Mật khẩu"
+                    required
+                  />
+                  <button type="button" class="toggle-password">
+                    <i data-lucide="eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Nhập lại mật khẩu -->
+              <div class="form-group-custom">
+                <label for="confirm_password">Nhập lại mật khẩu</label>
+                <div class="input-wrapper">
+                  <i data-lucide="lock" class="input-icon"></i>
+                  <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    placeholder="Nhập lại mật khẩu"
+                    required
+                  />
+                  <button type="button" class="toggle-password">
+                    <i data-lucide="eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit">
+              <i data-lucide="user-plus"></i> Tạo tài khoản ngay
+            </button>
+          </form>
+
+          <!-- Đường gạch ngang Hoặc -->
+          <div class="divider">
+            <span>Hoặc</span>
+          </div>
+
+          <!-- Chỉ giữ lại duy nhất nút Google -->
+          <div class="social-login">
+            <a href="{% provider_login_url 'google' %}" class="btn-social">
+              <svg class="social-icon" viewBox="0 0 24 24" width="18" height="18">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              Tạo tài khoản với Google
+            </a>
+          </div>
+
+          <!-- Dòng Đăng nhập ngay -->
+          <div class="bottom-link">
+            Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập ngay →</a>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+
+      </div> <!-- Đóng form-wrapper -->
+    </div> <!-- Đóng form-section -->
+  </div> <!-- Đóng auth-container -->
+</div> <!-- Đóng auth-body -->
+
+<script>
+  let selectedRoleValue = '';
+  let selectedRoleText = '';
+
+  function selectRole(role, cardElement) {
+    // Bỏ viền chọn của các thẻ khác
+    document.querySelectorAll('.role-card').forEach(card => card.classList.remove('active'));
+    
+    // Đánh dấu thẻ được chọn
+    cardElement.classList.add('active');
+    
+    selectedRoleValue = role;
+    if (role === 'student') selectedRoleText = 'Sinh viên';
+    if (role === 'teacher') selectedRoleText = 'Giảng viên';
+    if (role === 'admin') selectedRoleText = 'Quản trị viên';
+
+    // Mở khóa nút Tiếp tục
+    document.getElementById('btnContinue').disabled = false;
+  }
+
+  function goToRegisterForm() {
+    if (!selectedRoleValue) return;
+
+    // Cập nhật thông tin vào form
+    document.getElementById('selected_role').value = selectedRoleValue;
+    document.getElementById('display-role-name').innerText = `(${selectedRoleText})`;
+
+    // Chuyển bước
+    document.getElementById('step-role-selection').style.display = 'none';
+    document.getElementById('step-register-form').style.display = 'block';
+  }
+
+  function goToRoleSelection() {
+    document.getElementById('step-register-form').style.display = 'none';
+    document.getElementById('step-role-selection').style.display = 'block';
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('fullname');
+    const registerForm = document.getElementById('registerForm');
+
+    // 1. Kiểm tra Họ và tên không chứa số và tự viết hoa chữ cái đầu
+    if (nameInput) {
+      nameInput.addEventListener('input', function(e) {
+        let value = this.value;
+        value = value.replace(/[0-9]/g, '');
+        value = value.toLowerCase().replace(/(?:^|\s)\S/g, function(a) {
+          return a.toUpperCase();
+        });
+        this.value = value;
+      });
+    }
+
+    // 2. Tự động bật lại Bước 2 (Form điền thông tin) nếu server trả về lỗi (có messages)
+    const errorMessages = document.querySelectorAll('.error-message');
+    if (errorMessages.length > 0) {
+      // Lấy lại giá trị role nếu đã được gửi trước đó
+      const hiddenRoleInput = document.getElementById('selected_role');
+      if (hiddenRoleInput && hiddenRoleInput.value) {
+        selectedRoleValue = hiddenRoleInput.value;
+        if (selectedRoleValue === 'student') selectedRoleText = 'Sinh viên';
+        else if (selectedRoleValue === 'teacher') selectedRoleText = 'Giảng viên';
+        else if (selectedRoleValue === 'admin') selectedRoleText = 'Quản trị viên';
+        
+        document.getElementById('display-role-name').innerText = `(${selectedRoleText})`;
+      }
+
+      // Ẩn bước 1, hiển thị ngay bước 2 để người dùng thấy thông báo lỗi
+      document.getElementById('step-role-selection').style.display = 'none';
+      document.getElementById('step-register-form').style.display = 'block';
+    }
+
+    // 3. Kiểm tra định dạng email chuẩn @gmail.com ngay trên trình duyệt trước khi gửi
+    if (registerForm) {
+      registerForm.addEventListener('submit', function(e) {
+        const emailInput = document.getElementById('email').value.trim();
+        const emailRegex = /^[a-zA-Z0-9_.+-]+@gmail\.com$/;
+
+        if (!emailRegex.test(emailInput)) {
+          e.preventDefault(); // Chặn không cho gửi form đi
+          alert('Email không hợp lệ! Vui lòng nhập đúng định dạng kết thúc bằng @gmail.com (ví dụ: abc@gmail.com).');
+          document.getElementById('email').focus();
+        }
+      });
+    }
+  });
+</script>
+
 {% endblock register %}
