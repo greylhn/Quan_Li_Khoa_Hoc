@@ -1,0 +1,83 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Python cơ bản - PTIT214{% endblock title %}
+
+{% block detail-courses %}
+<div class="container py-4">
+  <!-- Breadcrumb điều hướng -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'courses' %}" class="text-decoration-none text-secondary">Khóa học</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Python cơ bản</li>
+    </ol>
+  </nav>
+
+  <!-- Khung chi tiết khóa học -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="row g-4 align-items-center">
+      
+      <!-- Cột trái: Ảnh thumbnail khóa học có icon Play -->
+      <div class="col-12 col-lg-5">
+        <div class="position-relative rounded-4 overflow-hidden shadow-sm">
+          <img 
+            src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800" 
+            alt="Python cơ bản" 
+            class="img-fluid w-100 object-fit-cover" 
+            style="height: 260px;"
+          />
+          <span class="badge bg-primary position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill fw-normal">
+            Khóa học
+          </span>
+          <!-- Play Icon Overlay -->
+          <div class="position-absolute top-50 start-50 translate-middle">
+            <button class="btn btn-light rounded-circle p-3 shadow opacity-90 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <i class="bi bi-play-fill fs-2 text-dark ms-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột phải: Thông tin khóa học -->
+      <div class="col-12 col-lg-7 d-flex flex-column justify-content-between">
+        <div>
+          <!-- Tiêu đề khóa học -->
+          <h2 class="fw-bold text-dark mb-3">{{course.title}}</h2>
+
+          <!-- Mô tả ngắn -->
+          <p class="text-muted mb-4 fs-6 leading-relaxed">
+            {{course.description}}
+          </p>
+
+          <!-- Thông tin Giảng viên -->
+          <div class="d-flex align-items-center gap-3 mb-4 pt-2 border-top">
+            <img 
+              src="https://ui-avatars.com/api/?name=Nguyen+Van+A&background=0D8ABC&color=fff" 
+              alt="Nguyễn Văn A" 
+              class="rounded-circle object-fit-cover" 
+              width="48" 
+              height="48"
+            />
+            <div>
+              <h6 class="fw-bold mb-0 text-dark">{{course.instructor.last_name}} {{course.instructor.first_name}}</h6>
+              <span class="text-muted small">{{course.instructor.bio}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-3 pt-3 border-top">
+          <a href="#" class="btn btn-primary rounded-3 px-4 py-2 fw-medium d-flex align-items-center gap-2 shadow-sm">
+            <i class="bi bi-cart-plus fs-5"></i> Đăng ký khóa học
+          </a>
+          <button type="button" class="btn btn-outline-secondary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2">
+            <i class="bi bi-bookmark fs-5"></i> Thêm vào yêu thích
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock detail-courses %}
