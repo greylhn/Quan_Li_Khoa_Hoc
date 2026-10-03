@@ -85,7 +85,6 @@ def registerPage(request):
 
     return render(request, 'app/register.html')
 
-
 def loginPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -125,8 +124,7 @@ def courses(request):
 def learning(request):
     return render(request, 'app/learning.html')
 
-def checkout(request):
-    return render(request, 'app/checkout.html')
-
 def teacher(request):
     return render(request, 'app/teacher.html')
+def profile (request):
+    return render(request,'app/profile.html')

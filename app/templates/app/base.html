@@ -23,7 +23,7 @@
 
     <!--  CSS  -->
   </head>
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <!-- NAVBAR HEADER -->
     <nav class="navbar navbar-expand-lg bg-white sticky-top py-2 border-bottom shadow-sm">
       <div class="container">
@@ -86,7 +86,7 @@
 
               <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 rounded-3" aria-labelledby="userDropdown">
                 <li>
-                  <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+                  <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url "profile" %}">
                     <i class="bi bi-person-circle fs-5 text-primary"></i> Xem trang cá nhân
                   </a>
                 </li>
@@ -108,6 +108,7 @@
       </div>
     </nav>
     <!-- Main Content Block -->
+<main class="flex-grow-1">
     {% block main-content %}{% endblock main-content %}
     {% block register %}{% endblock register %}
     {% block login %}{% endblock login %}
@@ -115,7 +116,69 @@
     {% block detail-courses %}{% endblock detail-courses %}
     {% block learning %}{% endblock learning %}
     {% block search %}{% endblock search %}
+    {% block checkout %}{% endblock checkout %}
+    {% block teacher %}{% endblock teacher %}
+    {% block profile %}{% endblock profile %}
+  </main>
 
+    <footer class="bg-dark text-white pt-5 pb-3 mt-auto">
+      <div class="container">
+        <div class="row g-4 mb-4">
+          <!-- Cột 1: Thông tin thương hiệu -->
+          <div class="col-12 col-md-4">
+            <h4 class="fw-bold text-primary d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-mortarboard-fill"></i> PTIT214
+            </h4>
+            <p class="text-secondary small mb-3">
+              Học mọi lúc, mọi nơi, kiến tạo tương lai cùng nền tảng giáo dục trực tuyến chất lượng cao.
+            </p>
+            <div class="d-flex gap-3 text-secondary">
+              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-facebook fs-5"></i></a>
+              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-youtube fs-5"></i></a>
+              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-twitter-x fs-5"></i></a>
+              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-linkedin fs-5"></i></a>
+            </div>
+          </div>
+
+          <!-- Cột 2: Liên kết nhanh -->
+          <div class="col-6 col-md-2">
+            <h6 class="fw-bold mb-3">Liên kết nhanh</h6>
+            <ul class="list-unstyled text-secondary small d-flex flex-column gap-2 mb-0">
+              <li><a href="/" class="text-secondary text-decoration-none">Trang chủ</a></li>
+              <li><a href="{% url 'courses' %}" class="text-secondary text-decoration-none">Khóa học</a></li>
+              <li><a href="#" class="text-secondary text-decoration-none">Giới thiệu</a></li>
+              <li><a href="#" class="text-secondary text-decoration-none">Liên hệ</a></li>
+            </ul>
+          </div>
+
+          <!-- Cột 3: Hỗ trợ -->
+          <div class="col-6 col-md-2">
+            <h6 class="fw-bold mb-3">Hỗ trợ</h6>
+            <ul class="list-unstyled text-secondary small d-flex flex-column gap-2 mb-0">
+              <li><a href="#" class="text-secondary text-decoration-none">FAQ</a></li>
+              <li><a href="#" class="text-secondary text-decoration-none">Chính sách bảo mật</a></li>
+              <li><a href="#" class="text-secondary text-decoration-none">Điều khoản sử dụng</a></li>
+              <li><a href="#" class="text-secondary text-decoration-none">Hướng dẫn thanh toán</a></li>
+            </ul>
+          </div>
+
+          <!-- Cột 4: Đăng ký nhận tin -->
+          <div class="col-12 col-md-4">
+            <h6 class="fw-bold mb-3">Kết nối với chúng tôi</h6>
+            <div class="input-group mb-3">
+              <input type="email" class="form-control" placeholder="Nhập email của bạn">
+              <button class="btn btn-primary" type="button">Đăng ký</button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-secondary opacity-50" />
+
+        <div class="text-center text-secondary small">
+          © 2026 PTIT24. Tất cả quyền được bảo lưu.
+        </div>
+      </div>
+    </footer>   
     <!-- JS Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
