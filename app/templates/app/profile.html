@@ -1,0 +1,166 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Trang cá nhân - PTIT214{% endblock title %}
+
+{% block profile %}
+<div class="bg-light py-4 border-bottom">
+  <div class="container">
+    <div class="d-flex align-items-center gap-3">
+      <img
+        src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username }}&background=1a56db&color=fff&size=128"
+        alt="Avatar"
+        class="rounded-circle shadow-sm border border-3 border-white"
+        width="80"
+        height="80"
+      />
+      <div>
+        <h3 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h3>
+        <p class="text-muted mb-0 small">
+          <i class="bi bi-envelope me-1"></i> {{ user.email|default:"hocvien@ptit214.edu.vn" }} 
+          <span class="badge bg-primary-subtle text-primary ms-2 rounded-pill">Học viên</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- Cột trái: Thống kê & Điều hướng cá nhân -->
+    <div class="col-12 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+        <div class="nav flex-column nav-pills gap-1">
+          <a class="nav-link active rounded-3 d-flex align-items-center gap-2" href="#">
+            <i class="bi bi-journal-bookmark fs-5"></i> Khóa học của tôi
+          </a>
+          <a class="nav-link text-secondary rounded-3 d-flex align-items-center gap-2" href="#">
+            <i class="bi bi-bookmark-heart fs-5"></i> Khóa học đã lưu
+          </a>
+          <a class="nav-link text-secondary rounded-3 d-flex align-items-center gap-2" href="#">
+            <i class="bi bi-award fs-5"></i> Chứng chỉ
+          </a>
+          <a class="nav-link text-secondary rounded-3 d-flex align-items-center gap-2" href="#">
+            <i class="bi bi-gear fs-5"></i> Cài đặt tài khoản
+          </a>
+        </div>
+      </div>
+
+      <!-- Thống kê học tập -->
+      <div class="card border-0 shadow-sm rounded-4 p-4">
+        <h6 class="fw-bold mb-3">Thống kê học tập</h6>
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+          <span class="text-muted small">Đang học</span>
+          <span class="fw-bold text-primary">3 khóa</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+          <span class="text-muted small">Đã hoàn thành</span>
+          <span class="fw-bold text-success">2 khóa</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted small">Tổng thời lượng</span>
+          <span class="fw-bold text-dark">45 giờ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cột phải: Danh sách khóa học đang học -->
+    <div class="col-12 col-lg-9">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">Khóa học đang học</h4>
+        <span class="text-muted small">3 khóa học trong tiến trình</span>
+      </div>
+
+      <div class="row g-4">
+        <!-- Khóa học đang học 1 -->
+        <div class="col-12 col-md-6 col-xl-4">
+          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" class="card-img-top" alt="Python" style="height: 160px; object-fit: cover;" />
+            <div class="card-body p-4 d-flex flex-column justify-content-between">
+              <div>
+                <span class="badge bg-primary-subtle text-primary mb-2">Lập trình</span>
+                <h6 class="fw-bold card-title mb-3">Python cơ bản</h6>
+                
+                <!-- Thanh Tiến độ -->
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Tiến độ</span>
+                    <span class="fw-bold text-dark">65%</span>
+                  </div>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <span class="text-muted extra-small d-block mt-1" style="font-size: 0.75rem;">13 / 20 bài học</span>
+                </div>
+              </div>
+
+              <a href="#" class="btn btn-primary rounded-pill w-100 fw-medium d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-play-circle-fill"></i> Tiếp tục học
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khóa học đang học 2 -->
+        <div class="col-12 col-md-6 col-xl-4">
+          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" class="card-img-top" alt="Web Frontend" style="height: 160px; object-fit: cover;" />
+            <div class="card-body p-4 d-flex flex-column justify-content-between">
+              <div>
+                <span class="badge bg-success-subtle text-success mb-2">Lập trình</span>
+                <h6 class="fw-bold card-title mb-3">Lập trình Web Frontend ReactJS</h6>
+                
+                <!-- Thanh Tiến độ -->
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Tiến độ</span>
+                    <span class="fw-bold text-dark">30%</span>
+                  </div>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <span class="text-muted extra-small d-block mt-1" style="font-size: 0.75rem;">6 / 20 bài học</span>
+                </div>
+              </div>
+
+              <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-medium d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-play-circle-fill"></i> Tiếp tục học
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khóa học đang học 3 -->
+        <div class="col-12 col-md-6 col-xl-4">
+          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600" class="card-img-top" alt="UI UX" style="height: 160px; object-fit: cover;" />
+            <div class="card-body p-4 d-flex flex-column justify-content-between">
+              <div>
+                <span class="badge bg-warning-subtle text-warning-emphasis mb-2">Thiết kế</span>
+                <h6 class="fw-bold card-title mb-3">Thiết Kế Giao Diện UI/UX Figma</h6>
+                
+                <!-- Thanh Tiến độ -->
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Tiến độ</span>
+                    <span class="fw-bold text-dark">85%</span>
+                  </div>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <span class="text-muted extra-small d-block mt-1" style="font-size: 0.75rem;">17 / 20 bài học</span>
+                </div>
+              </div>
+
+              <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-medium d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-play-circle-fill"></i> Tiếp tục học
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock profile %}
