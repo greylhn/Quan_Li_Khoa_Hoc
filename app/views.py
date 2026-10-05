@@ -3,10 +3,13 @@ from django.contrib.auth.models import User
 from django.contrib import messages, auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from .models import User  # Lấy model User tùy chỉnh từ models.py
 from .models import Course
 from .models import Chapter
 from .models import Lesson
+from .models import Enrollment
 # Create your views here.
 def detail_course (request):
     id = request.GET.get('id')
@@ -125,6 +128,39 @@ def learning(request):
     return render(request, 'app/learning.html')
 
 def teacher(request):
-    return render(request, 'app/teacher.html')
+    courses = Course.objects.filter(
+    enrollments__student=request.user,
+    enrollments__status="ACTIVE"
+)
+    context = {'courses' : courses}
+    return render(request, 'app/teacher.html',context)
+@login_required
 def profile (request):
-    return render(request,'app/profile.html')
+    enrollments = Enrollment.objects.filter(
+        student=request.user,
+        status='ACTIVE'
+    ).select_related('course')
+
+    courses = [e.course for e in enrollments]
+
+    context = {
+        'courses': courses,
+        'enrollments': enrollments,
+    }
+    return render(request,'app/profile.html',context)
+@login_required
+@require_POST
+def enroll_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+
+    # Thêm: ghi nhận tài khoản đang đăng nhập tham gia khóa học.
+    _, created = Enrollment.objects.get_or_create(
+        student=request.user,
+        course=course,
+        defaults={"status": "ACTIVE", "progress": 0}
+    )
+    if created:
+        messages.success(request, "Bạn đã đăng ký khóa học thành công.")
+    else:
+        messages.info(request, "Bạn đã đăng ký khóa học này rồi.")
+    return redirect("profile")

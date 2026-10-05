@@ -1,0 +1,139 @@
+/* ============================================================
+   PTIT24 - TEACHER DASHBOARD WITH SIDEBAR STYLE
+   ============================================================ */
+
+body {
+  background-color: #f4f6f9 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.main-layout {
+  min-height: calc(100vh - 380px);
+}
+
+/* SEARCH BOX NAVBAR */
+.search-box input {
+  background-color: #f1f3f5;
+  border: 1px solid transparent;
+  width: 220px;
+}
+
+/* STYLES SIDEBAR */
+.sidebar-panel {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+}
+
+.sidebar-nav .nav-link {
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.sidebar-nav .nav-link:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd !important;
+}
+
+.sidebar-nav .active-category {
+  background-color: #f1f5f9;
+  color: #0f172a !important;
+}
+
+.sidebar-nav .active-submenu {
+  background-color: #e0e7ff !important;
+  color: #1d4ed8 !important;
+  font-weight: 600;
+}
+
+/*  CARD KHÓA HỌC */
+.ptit-course-card {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+  overflow: hidden !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ptit-course-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* CỐ ĐỊNH CHIỀU CAO THUMBNAIL */
+.ptit-course-card .card-thumb {
+  width: 100% !important;
+  height: 150px !important;
+  overflow: hidden !important;
+  background-color: #000000;
+}
+
+.ptit-course-card .card-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* NỘI DUNG CHỮ TRONG CARD */
+.ptit-course-card .card-body-content {
+  padding: 1.2rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1 !important;
+  background-color: #ffffff;
+}
+
+.ptit-course-card .course-name {
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  color: #1e293b !important;
+  margin-bottom: 0.4rem !important;
+}
+
+.ptit-course-card .teacher-info {
+  font-size: 0.825rem !important;
+  color: #64748b !important;
+  margin-bottom: 1rem !important;
+  display: flex;
+  align-items: center;
+}
+
+/* NÚT QUẢN LÝ KHÓA HỌC BO TRÒN VIÊN THUỐC */
+.btn-pill-action {
+  display: inline-block !important;
+  border: 1px solid #0d6efd !important;
+  color: #0d6efd !important;
+  background-color: #ffffff !important;
+  border-radius: 50px !important;
+  padding: 5px 18px !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-pill-action:hover {
+  background-color: #0d6efd !important;
+  color: #ffffff !important;
+}
+
+/* FOOTER ĐEN XÁM TỐI MÀU */
+footer.ptit-footer {
+  background-color: #1e232a !important;
+  color: #ffffff !important;
+  border-top: 1px solid #2d3239;
+}
+
+footer.ptit-footer a {
+  transition: color 0.2s ease;
+}
+
+footer.ptit-footer a:hover {
+  color: #ffffff !important;
+}

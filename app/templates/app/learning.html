@@ -1,6 +1,128 @@
 {% extends "app/base.html" %} 
 {% load static %}
-<link rel="stylesheet" href="{% static 'app/css/learning.css' %}" />
+
+{% block title %}Học trực tuyến - Lập Trình Web{% endblock title %}
+
 {% block learning %}
-<h1>DAY LA TRANG HOC BAI</h1>
+<div class="container-fluid py-4 bg-light min-vh-100">
+  <div class="row g-4">
+    <!-- CỘT TRÁI: VIDEO BÀI GIẢNG & NỘI DUNG CHÍNH -->
+    <div class="col-12 col-lg-8">
+      <!-- Khung Video Phát Bài Học -->
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="ratio ratio-16x9 bg-dark">
+          <iframe 
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+            title="Video bài giảng" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="card-body p-4">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1">Bài 01 - Chương 1</span>
+            <button class="btn btn-sm btn-outline-success rounded-pill">
+              <i class="bi bi-check-circle me-1"></i> Đánh dấu hoàn thành
+            </button>
+          </div>
+          <h4 class="fw-bold text-dark mb-3">Tổng quan và Giới thiệu về Lập Trình Web</h4>
+          <p class="text-secondary small mb-0">
+            Trong bài học này, bạn sẽ nắm được kiến thức tổng quan về mô hình Client - Server, cách thức hoạt động của giao thức HTTP/HTTPS và các công cụ chuẩn bị cho khóa học.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tab Thông tin chi tiết & Tài liệu -->
+      <div class="card border-0 shadow-sm rounded-4 p-4">
+        <ul class="nav nav-tabs border-bottom-0 mb-3" id="learningTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-semibold" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">Mô tả bài học</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fw-semibold" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs" type="button" role="tab">Tài liệu đính kèm</button>
+          </li>
+        </ul>
+        <div class="tab-content text-muted small" id="learningTabContent">
+          <div class="tab-pane fade show active" id="desc" role="tabpanel">
+            <p>Chào mừng bạn đến với bài học mở đầu! Hãy đảm bảo bạn đã cài đặt các công cụ cần thiết như Visual Studio Code, Git và Python trước khi bắt đầu các phần thực hành tiếp theo.</p>
+          </div>
+          <div class="tab-pane fade" id="docs" role="tabpanel">
+            <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 mb-2">
+              <span><i class="bi bi-file-earmark-pdf text-danger me-2"></i> Slide_Bai_Giang_Chuong_1.pdf</span>
+              <a href="#" class="btn btn-sm btn-light border"><i class="bi bi-download"></i> Tải về</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CỘT PHẢI: DANH SÁCH BÀI HỌC (ACCORDION TĨNH) -->
+    <div class="col-12 col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 px-4 border-bottom">
+          <h5 class="fw-bold mb-1 text-dark fs-6">Nội dung khóa học</h5>
+          <div class="progress mt-2" style="height: 6px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <p class="text-muted small mt-2 mb-0">Hoàn thành 1 / 4 bài học (25%)</p>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="accordion accordion-flush" id="courseAccordion">
+            
+            <!-- CHƯƠNG 1 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button fw-bold text-dark bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true">
+                  Chương 1: Giới thiệu chung
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
+                <div class="list-group list-group-flush small">
+                  <a href="#" class="list-group-item list-group-item-action active border-0 d-flex justify-content-between align-items-center py-3">
+                    <div>
+                      <i class="bi bi-play-circle-fill me-2"></i> 1. Giới thiệu tổng quan
+                    </div>
+                    <span class="badge bg-light text-primary">10:15</span>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action border-0 d-flex justify-content-between align-items-center py-3">
+                    <div>
+                      <i class="bi bi-play-circle me-2"></i> 2. Cài đặt môi trường làm việc
+                    </div>
+                    <span class="badge bg-light text-muted">15:30</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- CHƯƠNG 2 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed fw-bold text-dark bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                  Chương 2: Thiết kế Giao diện Frontend
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#courseAccordion">
+                <div class="list-group list-group-flush small">
+                  <a href="#" class="list-group-item list-group-item-action border-0 d-flex justify-content-between align-items-center py-3">
+                    <div>
+                      <i class="bi bi-play-circle me-2"></i> 3. Cấu trúc HTML5 chuẩn
+                    </div>
+                    <span class="badge bg-light text-muted">20:45</span>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action border-0 d-flex justify-content-between align-items-center py-3">
+                    <div>
+                      <i class="bi bi-play-circle me-2"></i> 4. CSS Grid & Flexbox cơ bản
+                    </div>
+                    <span class="badge bg-light text-muted">25:10</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock learning %}

@@ -1,6 +1,140 @@
-{% extends "app/base.html" %} 
+{% extends "app/base.html" %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'app/css/teacher.css' %}" />
+
+{% block title %}Quản lý Đào tạo - PTIT24{% endblock %}
+
 {% block teacher %}
-<h1>DAY LA TAT CA GIAO VIEN</h1>
+<!--  CSS trang Giáo viên -->
+<link rel="stylesheet" href="{% static 'app/css/teacher.css' %}">
+
+<div class="container-fluid py-4 px-3 px-md-4 main-layout">
+  <div class="row g-4">
+    
+    <!-- CỘT BÊN TRÁI: SIDEBAR NAV -->
+    <div class="col-12 col-lg-3 col-xl-2 ms-0">
+      <div class="sidebar-panel p-3 bg-white rounded-4 border shadow-sm">
+        <h5 class="fw-bold text-dark mb-4 ps-2 pt-1">Quản lý Đào tạo</h5>
+        
+        <ul class="nav flex-column sidebar-nav gap-1">
+          <!-- Item Tổng quan -->
+          <li class="nav-item">
+            <a href="{% url 'teacher_dashboard' %}" class="nav-link text-dark d-flex align-items-center gap-2 rounded-3 px-3 py-2">
+              <i class="bi bi-grid fs-5"></i>
+              <span>Tổng quan</span>
+            </a>
+          </li>
+
+          <!-- Item Khóa học của tôi (Menu Xổ ra) -->
+          <li class="nav-item">
+            <a href="#courseSubmenu" data-bs-toggle="collapse" class="nav-link text-dark d-flex align-items-center justify-content-between rounded-3 px-3 py-2 active-category">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-journal-bookmark fs-5"></i>
+                <span class="fw-semibold">Khóa học của tôi</span>
+              </div>
+              <i class="bi bi-chevron-up small"></i>
+            </a>
+
+            <!-- Submenu danh sách con -->
+            <div class="collapse show ms-2 mt-1" id="courseSubmenu">
+              <ul class="nav flex-column gap-1 border-start ps-2">
+                <li>
+                  <a href="{% url 'teacher_courses' %}" class="nav-link active-submenu d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                    <i class="bi bi-eye"></i> Xem danh sách
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                    <i class="bi bi-plus-circle"></i> Thêm khóa học mới
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                    <i class="bi bi-pencil"></i> Chỉnh sửa khóa học
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                    <i class="bi bi-trash"></i> Xóa khóa học
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Các nút Cài đặt & Đăng xuất -->
+          <li class="nav-item mt-4 pt-3 border-top">
+            <a href="#" class="nav-link text-dark d-flex align-items-center gap-2 rounded-3 px-3 py-2">
+              <i class="bi bi-gear fs-5"></i>
+              <span>Cài đặt</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link text-dark d-flex align-items-center gap-2 rounded-3 px-3 py-2">
+              <i class="bi bi-box-arrow-right fs-5"></i>
+              <span>Đăng xuất</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CỘT BÊN PHẢI: NỘI DUNG CHÍNH  -->
+    <div class="col-12 col-lg-9 col-xl-10">
+      
+      <!-- Header Tiêu đề & Nút Tạo mới -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+        <div>
+          <h4 class="fw-bold text-dark mb-1">Khóa học đang giảng dạy</h4>
+          <p class="text-muted small mb-0">Quản lý các khóa học và cập nhật nội dung bài giảng cho học viên</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <a href="#" class="btn btn-primary rounded-pill btn-sm px-3 py-2 d-flex align-items-center gap-1">
+            <i class="bi bi-plus-lg"></i> Tạo khóa học mới
+          </a>
+          <select class="form-select form-select-sm rounded-3 shadow-none border-light-subtle py-2" style="width: auto;">
+            <option selected>Sắp xếp: Mới nhất</option>
+            <option value="1">Cũ nhất</option>
+            <option value="2">Số học viên</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Lưới Card Khóa học đổ từ Database -->
+      <div class="row g-4">
+        {% for course in courses %}
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="ptit-course-card">
+              <div class="card-thumb">
+                {% if course.image %}
+                  <img src="{{ course.image.url }}" alt="{{ course.title }}">
+                {% else %}
+                  <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" alt="{{ course.title }}">
+                {% endif %}
+              </div>
+              <div class="card-body-content">
+                <h6 class="course-name">{{ course.title }}</h6>
+                <p class="teacher-info">
+                  <i class="bi bi-person-circle me-1"></i>Giảng viên: {{ course.teacher.get_full_name|default:request.user.username }}
+                </p>
+                <div class="mt-auto pt-2">
+                  <a href="#" class="btn-pill-action">Quản lý khóa học</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <!-- Trường hợp chưa có khóa học nào -->
+          <div class="col-12 text-center py-5 bg-white rounded-4 border">
+            <i class="bi bi-journal-x fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="fw-bold text-secondary">Chưa có khóa học nào</h5>
+            <p class="text-muted small mb-3">Bạn chưa đăng tải khóa học nào lên hệ thống.</p>
+            <a href="#" class="btn btn-primary rounded-pill btn-sm px-4">Tạo khóa học ngay</a>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+  </div>
+</div>
 {% endblock teacher %}

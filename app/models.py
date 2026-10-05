@@ -96,3 +96,31 @@ class Lesson (models.Model):
         ordering = ['order']
     def __str__(self):
         return f"{self.chapter.title}-Bài {self.order}: {self.title}"
+class Enrollment(models.Model):
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='enrollments'
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='enrollments'
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('ACTIVE', 'Đang học'),
+            ('COMPLETED', 'Hoàn thành'),
+            ('PAUSED', 'Tạm dừng'),
+        ],
+        default='ACTIVE'
+    )
+    progress = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('student', 'course')
+
+    def __str__(self):
+        return f"{self.student.username} - {self.course.title}"
