@@ -26,7 +26,7 @@
 
 <div class="container py-5">
   <div class="row g-4">
-       {% for i in courses %}
+       {% for course in courses %}
     <!-- Khóa học 1 -->
     <div class="col-12 col-md-6 col-lg-4">
       <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
@@ -35,13 +35,13 @@
         </div>
         <div class="card-body p-4 d-flex flex-column justify-content-between">
           <div>
-            <h5 class="fw-bold card-title mb-2 fs-6">{{i.title}}</h5>
+            <h5 class="fw-bold card-title mb-2 fs-6">{{course.title}}</h5>
             <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
-              <i class="bi bi-person-circle"></i> {{i.instructor.last_name}} {{i.instructor.first_name}}
+              <i class="bi bi-person-circle"></i> {{course.instructor.last_name}} {{course.instructor.first_name}}
             </div>
           </div>
           <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-            <a href="{% url "detail-course" %}?id={{i.id}}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Xem chi tiết</a>
+            <a href="{% url "detail-course" %}?id={{course.id}}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Xem chi tiết</a>
           </div>
         </div>
       </div>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thêm khóa học mới - PTIT24</title>
+
+  <!-- Bootstrap 5 CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+  <!-- Dùng chung file CSS với teacher.css -->
+  <link rel="stylesheet" href="./teacher.css">
+</head>
+<body>
+
+  <!-- 1. NAVBAR HEADER -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom py-2 px-3 px-md-4">
+    <div class="container-fluid">
+      <!-- Logo PTIT24 -->
+      <a class="navbar-brand fw-bold text-primary fs-4 d-flex align-items-center gap-2 ms-md-2" href="#">
+        <i class="bi bi-mortarboard-fill"></i> PTIT24
+      </a>
+
+      <!-- Tìm kiếm & Profile admin -->
+      <div class="d-flex align-items-center gap-3 ms-auto">
+        <div class="search-box position-relative d-none d-sm-block">
+          <input type="text" class="form-control rounded-pill ps-3 pe-5 form-control-sm" placeholder="Tìm khóa học...">
+          <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+        </div>
+        <div class="dropdown d-flex align-items-center gap-2">
+          <button class="btn btn-primary rounded-circle btn-sm fw-bold px-2 py-1" type="button">AD</button>
+          <span class="small fw-semibold text-dark">admin <i class="bi bi-chevron-down small"></i></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 2. MAIN CONTAINER -->
+  <div class="container-fluid py-4 px-3 px-md-4 main-layout">
+    <div class="row g-4">
+      
+      <!-- CỘT BÊN TRÁI: SIDEBAR NAV -->
+      <div class="col-12 col-lg-3 col-xl-2 ms-0">
+        <div class="sidebar-panel p-3 bg-white rounded-4 border shadow-sm">
+          <h5 class="fw-bold text-dark mb-4 ps-2 pt-1">Quản lý Đào tạo</h5>
+          
+          <ul class="nav flex-column sidebar-nav gap-1">
+            <!-- Item Tổng quan -->
+            <li class="nav-item">
+              <a href="#" class="nav-link text-dark d-flex align-items-center gap-2 rounded-3 px-3 py-2">
+                <i class="bi bi-grid fs-5"></i>
+                <span>Tổng quan</span>
+              </a>
+            </li>
+
+            <!-- Item Khóa học của tôi -->
+            <li class="nav-item">
+              <a href="#courseSubmenu" data-bs-toggle="collapse" class="nav-link text-dark d-flex align-items-center justify-content-between rounded-3 px-3 py-2 active-category">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-journal-bookmark fs-5"></i>
+                  <span class="fw-semibold">Khóa học của tôi</span>
+                </div>
+                <i class="bi bi-chevron-up small"></i>
+              </a>
+
+              <!-- Submenu danh sách con -->
+              <div class="collapse show ms-2 mt-1" id="courseSubmenu">
+                <ul class="nav flex-column gap-1 border-start ps-2">
+                  <li>
+                    <a href="{% url "teacher_dashboard" %}" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                      <i class="bi bi-eye"></i> Xem danh sách
+                    </a>
+                  </li>
+                  <li>
+                    <!-- Active mục Thêm khóa học mới -->
+                    <a href="./add_course.html" class="nav-link active-submenu d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                      <i class="bi bi-plus-circle"></i> Thêm khóa học mới
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                      <i class="bi bi-pencil"></i> Chỉnh sửa khóa học
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                      <i class="bi bi-trash"></i> Xóa khóa học
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <!-- Cài đặt & Đăng xuất -->
+            <li class="nav-item mt-4 pt-3 border-top">
+              <a href="#" class="nav-link text-dark d-flex align-items-center gap-2 rounded-3 px-3 py-2">
+                <i class="bi bi-gear fs-5"></i>
+                <span>Cài đặt</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link text-dark d-flex align-items-center gap-2 rounded-3 px-3 py-2">
+                <i class="bi bi-box-arrow-right fs-5"></i>
+                <span>Đăng xuất</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CỘT BÊN PHẢI: FORM TẠO KHÓA HỌC MỚI -->
+      <div class="col-12 col-lg-9 col-xl-10">
+        
+        <!-- Header Tiêu đề & Nút Quay lại -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h4 class="fw-bold text-dark mb-1">Tạo khóa học mới</h4>
+            <p class="text-muted small mb-0">Điền thông tin chi tiết để xuất bản khóa học lên hệ thống</p>
+          </div>
+          <a href="./teacher.html" class="btn btn-outline-secondary rounded-pill btn-sm px-3 py-2 d-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+          </a>
+        </div>
+
+        <!-- Khung Form nhập liệu -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+          <form action="#" method="POST" enctype="multipart/form-data">
+            
+            <div class="row g-3">
+              <!-- Tên khóa học -->
+              <div class="col-12 col-md-8">
+                <label for="courseTitle" class="form-label fw-semibold text-dark">Tên khóa học <span class="text-danger">*</span></label>
+                <input type="text" class="form-control rounded-3 py-2" id="courseTitle" name="title" placeholder="Nhập tên khóa học (VD: Lập trình Python từ cơ bản đến nâng cao)">
+              </div>
+
+              <!-- Danh mục khóa học -->
+              <div class="col-12 col-md-4">
+                <label for="courseCategory" class="form-label fw-semibold text-dark">Danh mục <span class="text-danger">*</span></label>
+                <select class="form-select rounded-3 py-2" id="courseCategory" name="category">
+                  <option selected disabled>-- Chọn danh mục --</option>
+                  <option value="1">Lập trình Web</option>
+                  <option value="2">Ngôn ngữ lập trình (C++, Java, Python)</option>
+                  <option value="3">Cơ sở dữ liệu</option>
+                  <option value="4">Mạng máy tính & Bảo mật</option>
+                </select>
+              </div>
+
+              <!-- Mô tả ngắn -->
+              <div class="col-12">
+                <label for="shortDescription" class="form-label fw-semibold text-dark">Mô tả ngắn</label>
+                <input type="text" class="form-control rounded-3 py-2" id="shortDescription" name="short_description" placeholder="Tóm tắt ngắn gọn nội dung khóa học trong 1-2 câu">
+              </div>
+
+              <!-- Nội dung chi tiết khóa học -->
+              <div class="col-12">
+                <label for="courseDescription" class="form-label fw-semibold text-dark">Nội dung chi tiết khóa học</label>
+                <textarea class="form-control rounded-3" id="courseDescription" name="description" rows="5" placeholder="Mô tả mục tiêu khóa học, kiến thức thu được, đối tượng phù hợp..."></textarea>
+              </div>
+
+              <!-- Ảnh đại diện khóa học (Thumbnail) -->
+              <div class="col-12 col-md-6">
+                <label for="courseImage" class="form-label fw-semibold text-dark">Ảnh đại diện khóa học (Thumbnail)</label>
+                <input class="form-control rounded-3" type="file" id="courseImage" name="image" accept="image/*">
+                <div class="form-text text-muted">Định dạng hỗ trợ: JPG, PNG, WEBP. Dung lượng tối đa 5MB.</div>
+              </div>
+
+              <!-- Trạng thái xuất bản -->
+              <div class="col-12 col-md-6">
+                <label for="courseStatus" class="form-label fw-semibold text-dark">Trạng thái xuất bản</label>
+                <select class="form-select rounded-3 py-2" id="courseStatus" name="status">
+                  <option value="published" selected>Công khai ngay</option>
+                  <option value="draft">Lưu nháp (Chưa hiển thị với học viên)</option>
+                </select>
+              </div>
+            </div>
+
+            <hr class="my-4 text-muted">
+
+            <!-- Thao tác Lưu / Hủy -->
+            <div class="d-flex align-items-center justify-content-end gap-2">
+              <a href="./teacher.html" class="btn btn-light rounded-pill px-4 py-2 text-secondary fw-semibold">Hủy bỏ</a>
+              <button type="button" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold">
+                <i class="bi bi-check-lg me-1"></i> Tạo khóa học
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. FOOTER TỐI MÀU -->
+  <footer class="ptit-footer py-5 mt-5">
+    <div class="container-fluid px-3 px-md-5">
+      <div class="row g-4">
+        
+        <div class="col-lg-4 col-md-6">
+          <a class="footer-brand text-white fw-bold fs-4 d-flex align-items-center gap-2 mb-3 text-decoration-none" href="#">
+            <i class="bi bi-mortarboard-fill text-primary"></i> PTIT24
+          </a>
+          <p class="footer-desc text-secondary small">
+            Nền tảng học trực tuyến hàng đầu mang lại kỹ năng nâng cao cho trực tuyến chất lượng cao.
+          </p>
+          <div class="d-flex gap-3 text-secondary fs-5 mt-3">
+            <a href="#" class="text-secondary"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-secondary"><i class="bi bi-globe"></i></a>
+            <a href="#" class="text-secondary"><i class="bi bi-x-lg"></i></a>
+            <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-6">
+          <h6 class="fw-bold text-white mb-3">Liên kết nhanh</h6>
+          <ul class="list-unstyled text-secondary small d-flex flex-column gap-2">
+            <li><a href="#" class="text-secondary text-decoration-none">Trang chủ</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Khóa học</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Giới thiệu</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Liên hệ</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-6">
+          <h6 class="fw-bold text-white mb-3">Hỗ trợ</h6>
+          <ul class="list-unstyled text-secondary small d-flex flex-column gap-2">
+            <li><a href="#" class="text-secondary text-decoration-none">FAQ</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Chính sách bảo mật</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Điều khoản sử dụng</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Hướng dẫn thanh toán</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <h6 class="fw-bold text-white mb-3">Kết nối với chúng tôi</h6>
+          <div class="input-group">
+            <input type="email" class="form-control form-control-sm bg-white border-0" placeholder="Nhập email của bạn">
+            <button class="btn btn-primary btn-sm px-3" type="button">Đăng ký</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

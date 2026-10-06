@@ -7,25 +7,25 @@ from .models import Course
 
 class CourseAdminAddTests(TestCase):
     def setUp(self):
-        user_model = get_user_model()
-        self.admin = user_model.objects.create_superuser(
+        user_model_class = get_user_model()
+        self.admin = user_model_class.objects.create_superuser(
             username='admin',
             email='admin@example.com',
             password='test-password',
         )
-        self.instructor = user_model.objects.create_user(
+        self.instructor = user_model_class.objects.create_user(
             username='instructor',
             email='instructor@example.com',
             password='test-password',
-            role=user_model.Role.INSTRUCTOR,
+            role=user_model_class.Role.INSTRUCTOR,
         )
 
     def test_admin_can_add_course_without_price(self):
-        request = RequestFactory().get('/admin/app/course/add/')
-        request.user = self.admin
+        admin_request = RequestFactory().get('/admin/app/course/add/')
+        admin_request.user = self.admin
         course_admin = admin.site._registry[Course]
-        form_class = course_admin.get_form(request)
-        form = form_class(
+        course_form_class = course_admin.get_form(admin_request)
+        course_form = course_form_class(
             data={
                 'title': 'Test Course',
                 'slug': 'test-course',
@@ -34,7 +34,7 @@ class CourseAdminAddTests(TestCase):
             }
         )
 
-        self.assertNotIn('price', form.fields)
-        self.assertTrue(form.is_valid(), form.errors)
-        form.save()
+        self.assertNotIn('price', course_form.fields)
+        self.assertTrue(course_form.is_valid(), course_form.errors)
+        course_form.save()
         self.assertTrue(Course.objects.filter(slug='test-course').exists())

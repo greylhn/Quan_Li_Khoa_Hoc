@@ -67,16 +67,19 @@
         </div>
 
         <div class="d-flex flex-wrap align-items-center gap-3 pt-3 border-top">
-          {# Thêm: gửi ID khóa học hiện tại đến view enroll_course. #}
-          <form action="{% url 'enroll-course' course.id %}" method="post">
+          {% comment %} # dang ki khoa hoc {% endcomment %}
+          <form action="{% url 'enroll_course' course.id %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary rounded-3 px-4 py-2 fw-medium d-flex align-items-center gap-2 shadow-sm">
               <i class="bi bi-cart-plus fs-5"></i> Đăng ký khóa học
             </button>
           </form>
-          <button type="button" class="btn btn-outline-secondary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2">
+          <form action="{% url 'saved_course' course.id %}" method="post">
+              {% csrf_token %}
+          <button type="submit" class="btn btn-outline-secondary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2">
             <i class="bi bi-bookmark fs-5"></i> Thêm vào yêu thích
           </button>
+        </form>
         </div>
 
       </div>

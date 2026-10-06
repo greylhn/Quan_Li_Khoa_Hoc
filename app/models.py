@@ -124,3 +124,20 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.course.title}"
+class SaveCourse(models.Model):
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="savecourse"
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='savecourse'
+    )
+    saved_at = models.DateTimeField(auto_now_add=True)
+    # moi hoc sinh dc luu 1 lan 
+    class Meta:
+        unique_together = ('student','course')
+    def __str__(self):
+        return f"{self.student.username} - {self.course.title}"

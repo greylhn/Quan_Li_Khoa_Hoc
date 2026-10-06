@@ -43,7 +43,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                  <a href="{% url "add_course" %}" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
                     <i class="bi bi-plus-circle"></i> Thêm khóa học mới
                   </a>
                 </li>
@@ -105,8 +105,8 @@
           <div class="col-12 col-md-6 col-xl-4">
             <div class="ptit-course-card">
               <div class="card-thumb">
-                {% if course.image %}
-                  <img src="{{ course.image.url }}" alt="{{ course.title }}">
+                {% if course.thumbnail and course.thumbnail.name %}
+                  <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}">
                 {% else %}
                   <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" alt="{{ course.title }}">
                 {% endif %}
@@ -114,7 +114,7 @@
               <div class="card-body-content">
                 <h6 class="course-name">{{ course.title }}</h6>
                 <p class="teacher-info">
-                  <i class="bi bi-person-circle me-1"></i>Giảng viên: {{ course.teacher.get_full_name|default:request.user.username }}
+                  <i class="bi bi-person-circle me-1"></i>Giảng viên: {{ course.instructor.get_full_name|default:request.user.username }}
                 </p>
                 <div class="mt-auto pt-2">
                   <a href="#" class="btn-pill-action">Quản lý khóa học</a>
