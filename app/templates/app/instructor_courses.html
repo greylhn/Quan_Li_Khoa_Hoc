@@ -1,0 +1,148 @@
+{% extends "app/base_instructor.html" %}
+
+{% block title %}
+Khóa học của tôi - PTIT214
+{% endblock title %}
+
+{% block instructor_content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                Khóa học của tôi
+            </h3>
+
+            <p class="text-muted mb-0">
+                Quản lý các khóa học bạn đang phụ trách.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'create_course' %}"
+            class="btn btn-primary rounded-3"
+        >
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Tạo khóa học
+
+        </a>
+
+    </div>
+
+
+    {% if courses %}
+
+    <div class="row g-4">
+
+        {% for course in courses %}
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+
+                {% if course.thumbnail %}
+
+                <img
+                    src="{{ course.thumbnail.url }}"
+                    class="card-img-top"
+                    style="height:180px; object-fit:cover;"
+                >
+
+                {% else %}
+
+                <div
+                    class="bg-light d-flex align-items-center justify-content-center"
+                    style="height:180px;"
+                >
+
+                    <i class="bi bi-book fs-1 text-muted"></i>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold">
+                        {{ course.title }}
+                    </h5>
+
+                    <p class="text-muted small">
+                        {{ course.description|truncatewords:20 }}
+                    </p>
+
+
+                    <div class="d-flex gap-3 text-muted small mb-3">
+
+                        <span>
+                            <i class="bi bi-collection me-1"></i>
+                            {{ course.chapters.count }} chương
+                        </span>
+
+                        <span>
+                            <i class="bi bi-people me-1"></i>
+                            {{ course.enrollments.count }} học viên
+                        </span>
+
+                    </div>
+
+
+                    <a
+                        href="#"
+                        class="btn btn-primary btn-sm rounded-3 w-100"
+                    >
+
+                        Quản lý khóa học
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-body text-center py-5">
+
+            <i class="bi bi-book display-4 text-muted"></i>
+
+            <h5 class="fw-bold mt-3">
+                Chưa có khóa học
+            </h5>
+
+            <p class="text-muted">
+                Bạn chưa tạo khóa học nào.
+            </p>
+
+            <a
+                href="{% url 'create_course' %}"
+                class="btn btn-primary rounded-3"
+            >
+
+                <i class="bi bi-plus-lg me-1"></i>
+                Tạo khóa học đầu tiên
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock instructor_content %}

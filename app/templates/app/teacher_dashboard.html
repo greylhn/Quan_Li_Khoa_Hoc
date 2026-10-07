@@ -1,0 +1,57 @@
+{% extends "app/base_instructor.html" %}
+
+{% block title %}
+Dashboard - Instructor
+{% endblock title %}
+
+{% block page_title %}
+Dashboard
+{% endblock page_title %}
+
+{% block instructor_content %}
+
+<div class="mb-4">
+    <h3 class="fw-bold mb-1">
+        Xin chào, {{ user.get_full_name|default:user.username }}
+    </h3>
+
+    <p class="text-muted">
+        Quản lý hoạt động giảng dạy của bạn.
+    </p>
+</div>
+
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <small class="text-muted">Khóa học</small>
+            <h2 class="fw-bold mt-2">0</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <small class="text-muted">Chương</small>
+            <h2 class="fw-bold mt-2">0</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <small class="text-muted">Bài học</small>
+            <h2 class="fw-bold mt-2">0</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <small class="text-muted">Học viên</small>
+            <h2 class="fw-bold mt-2">0</h2>
+        </div>
+    </div>
+
+</div>
+
+{% endblock instructor_content %}
+

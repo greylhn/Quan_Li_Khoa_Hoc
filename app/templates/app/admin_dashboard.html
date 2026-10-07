@@ -1,0 +1,475 @@
+{% extends "app/base_admin.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard - PTIT214{% endblock title %}
+
+{% block admin %}
+
+<div class="container-fluid py-4 bg-light min-vh-100">
+
+    <!-- HEADER -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                Admin Dashboard
+            </h3>
+
+            <p class="text-muted mb-0">
+                Xin chào, {{ user.get_full_name|default:user.username }}
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'create_instructor' %}"
+                class="btn btn-primary rounded-3">
+
+                <i class="bi bi-person-plus me-1"></i>
+                Tạo giảng viên
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =============================== -->
+    <!-- THỐNG KÊ -->
+    <!-- =============================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- STUDENTS -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted mb-2">
+                                Học viên
+                            </p>
+
+                            <h2 class="fw-bold mb-0">
+                                {{ total_students }}
+                            </h2>
+
+                        </div>
+
+                        <div class="bg-primary-subtle text-primary rounded-3 p-3">
+
+                            <i class="bi bi-people fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INSTRUCTORS -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted mb-2">
+                                Giảng viên
+                            </p>
+
+                            <h2 class="fw-bold mb-0">
+                                {{ total_instructors }}
+                            </h2>
+
+                        </div>
+
+                        <div class="bg-success-subtle text-success rounded-3 p-3">
+
+                            <i class="bi bi-person-video3 fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COURSES -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted mb-2">
+                                Khóa học
+                            </p>
+
+                            <h2 class="fw-bold mb-0">
+                                {{ total_courses }}
+                            </h2>
+
+                        </div>
+
+                        <div class="bg-warning-subtle text-warning rounded-3 p-3">
+
+                            <i class="bi bi-book fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ENROLLMENTS -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted mb-2">
+                                Lượt đăng ký
+                            </p>
+
+                            <h2 class="fw-bold mb-0">
+                                {{ total_enrollments }}
+                            </h2>
+
+                        </div>
+
+                        <div class="bg-info-subtle text-info rounded-3 p-3">
+
+                            <i class="bi bi-person-check fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =============================== -->
+    <!-- MENU QUẢN LÝ -->
+    <!-- =============================== -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-12 col-lg-3">
+
+            <a
+                href="{% url 'create_instructor' %}"
+                class="text-decoration-none">
+
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <i class="bi bi-person-plus-fill text-primary fs-2"></i>
+
+                        <h5 class="fw-bold mt-3">
+                            Tạo giảng viên
+                        </h5>
+
+                        <p class="text-muted small mb-0">
+                            Tạo tài khoản cho giảng viên mới.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <div class="col-12 col-lg-3">
+
+            <a
+                href="{% url "admin_students" %}"
+                class="text-decoration-none">
+
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <i class="bi bi-people-fill text-success fs-2"></i>
+
+                        <h5 class="fw-bold mt-3">
+                            Quản lý học viên
+                        </h5>
+
+                        <p class="text-muted small mb-0">
+                            Xem và quản lý tài khoản học viên.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <div class="col-12 col-lg-3">
+
+            <a
+                href="{% url "admin_instructors" %}"
+                class="text-decoration-none">
+
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <i class="bi bi-person-video3 text-warning fs-2"></i>
+
+                        <h5 class="fw-bold mt-3">
+                            Quản lý giảng viên
+                        </h5>
+
+                        <p class="text-muted small mb-0">
+                            Xem danh sách và quản lý giảng viên.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <div class="col-12 col-lg-3">
+
+            <a
+                href="{% url "admin_courses" %}"
+                class="text-decoration-none">
+
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <i class="bi bi-journal-text text-info fs-2"></i>
+
+                        <h5 class="fw-bold mt-3">
+                            Quản lý khóa học
+                        </h5>
+
+                        <p class="text-muted small mb-0">
+                            Xem và quản lý các khóa học.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =============================== -->
+    <!-- DANH SÁCH GIẢNG VIÊN + KHÓA HỌC -->
+    <!-- =============================== -->
+
+    <div class="row g-4">
+
+
+        <!-- GIẢNG VIÊN -->
+
+        <div class="col-12 col-xl-6">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-header bg-white border-0 p-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h5 class="fw-bold mb-0">
+                            Giảng viên mới
+                        </h5>
+
+                        <span class="badge bg-primary-subtle text-primary">
+                            {{ total_instructors }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body p-0">
+
+                    {% for instructor in instructors %}
+
+                    <div class="d-flex align-items-center gap-3 p-3 border-top">
+
+                        <div
+                            class="rounded-circle bg-primary-subtle text-primary
+                                   d-flex align-items-center justify-content-center"
+                            style="width: 45px; height: 45px;">
+
+                            <i class="bi bi-person"></i>
+
+                        </div>
+
+                        <div class="flex-grow-1">
+
+                            <h6 class="fw-semibold mb-1">
+
+                                {{ instructor.get_full_name|default:instructor.username }}
+
+                            </h6>
+
+                            <p class="text-muted small mb-0">
+
+                                {{ instructor.email }}
+
+                            </p>
+
+                        </div>
+
+                        <span class="badge bg-success-subtle text-success">
+                            Giảng viên
+                        </span>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="text-center p-4 text-muted">
+
+                        Chưa có giảng viên.
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- KHÓA HỌC -->
+
+        <div class="col-12 col-xl-6">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-header bg-white border-0 p-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h5 class="fw-bold mb-0">
+                            Khóa học mới
+                        </h5>
+
+                        <span class="badge bg-warning-subtle text-warning">
+                            {{ total_courses }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body p-0">
+
+                    {% for course in recent_courses %}
+
+                    <div class="d-flex align-items-center gap-3 p-3 border-top">
+
+                        <div
+                            class="rounded-3 bg-light
+                                   d-flex align-items-center justify-content-center"
+                            style="width: 55px; height: 45px;">
+
+                            <i class="bi bi-book text-primary"></i>
+
+                        </div>
+
+                        <div class="flex-grow-1">
+
+                            <h6 class="fw-semibold mb-1">
+                                {{ course.title }}
+                            </h6>
+
+                            <p class="text-muted small mb-0">
+                                Khóa học
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="text-center p-4 text-muted">
+
+                        Chưa có khóa học.
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock admin %}

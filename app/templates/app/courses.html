@@ -1,0 +1,53 @@
+{% extends "app/base.html" %} 
+{% load static %}
+
+{% block title %}Tất cả khóa học - PTIT24{% endblock title %}
+
+{% block courses %}
+<div class="bg-light py-4 border-bottom">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <h2 class="fw-bold mb-1">Tất cả khóa học</h2>
+        <p class="text-muted mb-0 small">Khám phá các khóa học chất lượng giúp bạn nâng cao kỹ năng</p>
+      </div>
+      <!-- Thanh tìm kiếm & Sắp xếp -->
+      <div class="d-flex align-items-center gap-2">
+        <div class="input-group" style="max-width: 300px;">
+        </div>
+        <select class="form-select w-auto">
+          <option selected>Sắp xếp: Mới nhất</option>
+          <option value="3">Đánh giá cao nhất</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-4">
+       {% for course in courses %}
+    <!-- Khóa học 1 -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="position-relative">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" class="card-img-top" alt="Python" style="height: 190px; object-fit: cover;" />
+        </div>
+        <div class="card-body p-4 d-flex flex-column justify-content-between">
+          <div>
+            <h5 class="fw-bold card-title mb-2 fs-6">{{course.title}}</h5>
+            <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+              <i class="bi bi-person-circle"></i> {{course.instructor.last_name}} {{course.instructor.first_name}}
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+            <a href="{% url "detail-course" %}?id={{course.id}}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endfor %}
+
+  </div>
+</div>
+{% endblock courses %}

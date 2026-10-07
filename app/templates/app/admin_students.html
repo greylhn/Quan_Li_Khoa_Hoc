@@ -1,0 +1,220 @@
+{% extends "app/base_admin.html" %}
+{% load static %}
+
+{% block title %}Quản lý học viên - PTIT214{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid py-4 bg-light min-vh-100">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                Quản lý học viên
+            </h3>
+
+            <p class="text-muted mb-0">
+                Danh sách tất cả học viên trong hệ thống
+            </p>
+        </div>
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="btn btn-light border rounded-3"
+        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+        <div class="card-body">
+
+            <form method="GET" class="d-flex gap-2">
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    class="form-control rounded-3"
+                    placeholder="Tìm theo tên, email, username..."
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-primary rounded-3 px-4"
+                >
+                    <i class="bi bi-search me-1"></i>
+                    Tìm
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- LIST -->
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <div class="card-header bg-white p-4">
+
+            <div class="d-flex justify-content-between">
+
+                <h5 class="fw-bold mb-0">
+                    Danh sách học viên
+                </h5>
+
+                <span class="badge bg-primary-subtle text-primary">
+                    {{ students|length }} học viên
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th class="px-4">
+                            Học viên
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Khóa học
+                        </th>
+
+                        <th>
+                            Trạng thái
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+
+                        <td class="px-4">
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div
+                                    class="rounded-circle bg-primary-subtle
+                                           text-primary d-flex
+                                           align-items-center
+                                           justify-content-center"
+                                    style="width:45px;height:45px;"
+                                >
+
+                                    <i class="bi bi-person"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="fw-semibold">
+                                        {{ student.get_full_name|default:student.username }}
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        @{{ student.username }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            {{ student.email }}
+                        </td>
+
+
+                        <td>
+
+                            <span class="badge bg-info-subtle text-info">
+
+                                {{ student.enrollment_count }}
+
+                                khóa
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if student.is_active %}
+
+                            <span class="badge bg-success-subtle text-success">
+                                Hoạt động
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-danger-subtle text-danger">
+                                Đã khóa
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="text-center py-5 text-muted"
+                        >
+
+                            Không tìm thấy học viên.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,233 @@
+{% extends "app/base_admin.html" %}
+{% load static %}
+
+{% block title %}Quản lý giảng viên - PTIT214{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid py-4 bg-light min-vh-100">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h3 class="fw-bold mb-1">
+                Quản lý giảng viên
+            </h3>
+
+            <p class="text-muted mb-0">
+                Danh sách giảng viên và khóa học đang phụ trách
+            </p>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'create_instructor' %}"
+                class="btn btn-primary rounded-3"
+            >
+                <i class="bi bi-person-plus me-1"></i>
+                Tạo giảng viên
+            </a>
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="btn btn-light border rounded-3"
+            >
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+        <div class="card-body">
+
+            <form method="GET" class="d-flex gap-2">
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    class="form-control rounded-3"
+                    placeholder="Tìm tên, email, username..."
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-primary rounded-3 px-4"
+                >
+                    <i class="bi bi-search me-1"></i>
+                    Tìm
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- INSTRUCTORS -->
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <div class="card-header bg-white p-4">
+
+            <div class="d-flex justify-content-between">
+
+                <h5 class="fw-bold mb-0">
+                    Danh sách giảng viên
+                </h5>
+
+                <span class="badge bg-success-subtle text-success">
+                    {{ instructors|length }} giảng viên
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th class="px-4">
+                            Giảng viên
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Khóa học
+                        </th>
+
+                        <th>
+                            Trạng thái
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for instructor in instructors %}
+
+                    <tr>
+
+                        <td class="px-4">
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div
+                                    class="rounded-circle bg-success-subtle
+                                           text-success d-flex
+                                           align-items-center
+                                           justify-content-center"
+                                    style="width:45px;height:45px;"
+                                >
+
+                                    <i class="bi bi-person-video3"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="fw-semibold">
+                                        {{ instructor.get_full_name|default:instructor.username }}
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        @{{ instructor.username }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            {{ instructor.email }}
+                        </td>
+
+
+                        <td>
+
+                            <span class="badge bg-warning-subtle text-warning">
+
+                                {{ instructor.course_count }}
+
+                                khóa
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if instructor.is_active %}
+
+                            <span class="badge bg-success-subtle text-success">
+                                Hoạt động
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-danger-subtle text-danger">
+                                Đã khóa
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="text-center py-5 text-muted"
+                        >
+
+                            Chưa có giảng viên.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,226 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Học trực tuyến - {{ course.title }}{% endblock title %}
+
+{% block learning %}
+<div class="container-fluid py-4 bg-light min-vh-100">
+  <div class="row g-4">
+    <main class="col-12 col-lg-8">
+      {% if lesson %}
+        <section class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+          <div class="ratio ratio-16x9 bg-dark">
+            {% if lesson.lesson_type == 'VIDEO' and lesson.embed_video_url %}
+              <iframe
+                id="lesson-video-player"
+                src="{{ lesson.embed_video_url }}"
+                title="{{ lesson.title }}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+              </iframe>
+            {% elif lesson.lesson_type == 'VIDEO' %}
+              <div class="d-flex flex-column align-items-center justify-content-center text-white text-center p-3">
+                <i class="bi bi-exclamation-circle fs-1"></i>
+                <span class="mt-2">Liên kết video chưa đúng định dạng. Hãy kiểm tra lại URL YouTube.</span>
+              </div>
+            {% elif lesson.attachment %}
+              <div class="d-flex flex-column align-items-center justify-content-center text-white">
+                <i class="bi bi-file-earmark-text fs-1"></i>
+                <span class="mt-2">Bài học có tài liệu đính kèm bên dưới</span>
+              </div>
+            {% else %}
+              <div class="d-flex flex-column align-items-center justify-content-center text-white">
+                <i class="bi bi-journal-text fs-1"></i>
+                <span class="mt-2">{{ lesson.get_lesson_type_display }}</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="card-body p-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+              <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                Chương {{ lesson.chapter.order }} · Bài {{ lesson.order }}
+              </span>
+              <span id="lesson-completed-badge" class="badge bg-success-subtle text-success rounded-pill px-3 py-2" {% if not lesson_progress.completed %}hidden{% endif %}>
+                <i class="bi bi-check-circle-fill me-1"></i>Đã hoàn thành
+              </span>
+            </div>
+
+            <h1 class="h4 fw-bold text-dark mb-3">{{ lesson.title }}</h1>
+            {% if lesson.content %}
+              <div class="text-secondary" {% if lesson.lesson_type == 'ARTICLE' %}id="lesson-article-content"{% endif %}>
+                {{ lesson.content|linebreaks }}
+                {% if lesson.lesson_type == 'ARTICLE' %}<div id="article-end-marker" class="w-100" style="height: 1px;" aria-hidden="true"></div>{% endif %}
+              </div>
+            {% else %}
+              <p class="text-muted mb-0">Bài học chưa có nội dung mô tả.</p>
+              {% if lesson.lesson_type == 'ARTICLE' %}<div id="article-end-marker" class="w-100" style="height: 1px;" aria-hidden="true"></div>{% endif %}
+            {% endif %}
+
+            {% if lesson.lesson_type == 'VIDEO' and not lesson_progress.completed %}
+              <div id="video-watch-status" class="alert alert-info small mt-3 mb-0">
+                {% if lesson.is_youtube_video %}
+                  Đã xem {{ lesson_progress.watched_percent|floatformat:0 }}% · Tự động hoàn thành khi đạt {{ lesson.required_watch_percent }}% video.
+                {% else %}
+                  Theo dõi tự động hiện áp dụng cho video YouTube được nhúng.
+                {% endif %}
+              </div>
+            {% elif lesson.lesson_type == 'ARTICLE' and not lesson_progress.completed %}
+              <p id="article-read-status" class="text-muted small mt-3 mb-0">
+                Cuộn đến cuối bài đọc để hệ thống ghi nhận hoàn thành.
+              </p>
+            {% elif lesson.lesson_type == 'DOCUMENT' and not lesson_progress.completed %}
+              <p id="document-read-status" class="text-muted small mt-3 mb-0">
+                Mở tài liệu đính kèm để hệ thống ghi nhận hoàn thành.
+              </p>
+            {% endif %}
+
+            {% if next_lesson %}
+              <div class="alert {% if next_lesson.is_unlocked %}alert-success{% else %}alert-primary{% endif %} mt-4 mb-3">
+                {% if next_lesson.is_unlocked %}
+                  <i class="bi bi-unlock-fill me-2"></i>Bài tiếp theo đã được mở khóa.
+                {% elif next_lesson.unlock_type == 'STUDY_TIME' %}
+                  <i class="bi bi-hourglass-split me-2"></i>
+                  Hoàn thành bài này hoặc học đủ {{ next_lesson.unlock_required_minutes }} phút để mở bài tiếp theo.
+                  <div class="small mt-1" id="study-time-status">
+                    Thời gian học đã tích lũy: {{ watched_seconds }} giây.
+                  </div>
+                {% else %}
+                  <i class="bi bi-lock-fill me-2"></i>Hoàn thành bài này để mở bài tiếp theo.
+                {% endif %}
+              </div>
+            {% else %}
+              <div class="alert alert-success mt-4 mb-3">
+                <i class="bi bi-flag-fill me-2"></i>Đây là bài học cuối cùng của khóa học.
+              </div>
+            {% endif %}
+
+            <p id="lesson-completion-status" class="small mb-0 mt-3 {% if lesson_progress.completed %}text-success{% else %}text-muted{% endif %}">
+              {% if lesson_progress.completed %}
+                <i class="bi bi-check-circle-fill me-1"></i>Bài học đã hoàn thành.
+              {% else %}
+                Tiến độ sẽ được ghi nhận tự động theo hoạt động học.
+              {% endif %}
+            </p>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 p-4">
+          <h2 class="h6 fw-bold mb-3">Tài liệu bài học</h2>
+          {% if lesson.attachment %}
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 bg-light rounded-3">
+              <span class="text-break"><i class="bi bi-paperclip text-primary me-2"></i>{{ lesson.attachment.name }}</span>
+              <a id="lesson-attachment-link" href="{{ lesson.attachment.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-light border">
+                <i class="bi bi-download me-1"></i>Tải về
+              </a>
+            </div>
+          {% else %}
+            <p class="text-muted small mb-0">Bài học này chưa có tài liệu đính kèm.</p>
+          {% endif %}
+        </section>
+      {% else %}
+        <section class="card border-0 shadow-sm rounded-4 p-5 text-center">
+          <i class="bi bi-journal-x fs-1 text-muted mb-3"></i>
+          <h1 class="h4">{{ course.title }}</h1>
+          <p class="text-muted mb-0">Khóa học chưa có bài học nào.</p>
+        </section>
+      {% endif %}
+    </main>
+
+    <aside class="col-12 col-lg-4">
+      <section class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white p-4">
+          <h2 class="h6 fw-bold mb-2">{{ course.title }}</h2>
+          <p id="learning-streak" class="small text-danger mb-3">
+            <i class="bi bi-fire me-1"></i>Chuỗi học: <span id="learning-streak-count">{{ streak.current_streak }}</span> ngày
+            <span class="text-muted">(dài nhất: <span id="learning-streak-best">{{ streak.longest_streak }}</span>)</span>
+          </p>
+          <div class="progress" style="height: 7px;" role="progressbar"
+               aria-valuenow="{{ course_progress }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar bg-success" style="width: {{ course_progress }}%;"></div>
+          </div>
+          <p class="text-muted small mt-2 mb-0">Tiến độ khóa học: {{ course_progress }}%</p>
+        </div>
+
+        <div class="accordion accordion-flush" id="courseAccordion">
+          {% for chapter in chapters %}
+            <section class="accordion-item">
+              <h3 class="accordion-header" id="heading{{ chapter.id }}">
+                <button class="accordion-button fw-semibold bg-light" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapse{{ chapter.id }}"
+                        aria-expanded="true" aria-controls="collapse{{ chapter.id }}">
+                  Chương {{ chapter.order }}: {{ chapter.title }}
+                </button>
+              </h3>
+              <div id="collapse{{ chapter.id }}" class="accordion-collapse collapse show"
+                   aria-labelledby="heading{{ chapter.id }}" data-bs-parent="#courseAccordion">
+                <div class="list-group list-group-flush">
+                  {% for item in chapter.lessons.all %}
+                    <a id="lesson-{{ item.id }}"
+                       href="{% if item.is_unlocked %}{% url 'learning' course.id %}?lesson={{ item.id }}{% else %}#{% endif %}"
+                       data-open-href="{% url 'learning' course.id %}?lesson={{ item.id }}"
+                       data-unlocked="{% if item.is_unlocked %}true{% else %}false{% endif %}"
+                       {% if not item.is_unlocked %}aria-disabled="true" tabindex="-1"{% endif %}
+                       class="list-group-item list-group-item-action border-0 py-3 {% if lesson and lesson.id == item.id %}active{% endif %} {% if not item.is_unlocked %}text-muted{% endif %}">
+                      <div class="d-flex align-items-center justify-content-between gap-2">
+                        <span>
+                          {% if not item.is_unlocked %}
+                            <i data-status-icon class="bi bi-lock-fill me-2"></i>
+                          {% elif item.progress and item.progress.completed %}
+                            <i data-status-icon class="bi bi-check-circle-fill me-2"></i>
+                          {% else %}
+                            <i data-status-icon class="bi bi-play-circle me-2"></i>
+                          {% endif %}
+                          {{ item.order }}. {{ item.title }}
+                        </span>
+                        {% if not item.is_unlocked %}
+                          <span class="badge bg-secondary-subtle text-secondary" data-lock-badge>Đang khóa</span>
+                        {% elif item.lesson_type == 'VIDEO' %}
+                          <span class="badge bg-light text-muted">Video</span>
+                        {% elif item.lesson_type == 'ARTICLE' %}
+                          <span class="badge bg-light text-muted">Bài đọc</span>
+                        {% else %}
+                          <span class="badge bg-light text-muted">Tài liệu</span>
+                        {% endif %}
+                      </div>
+                      {% if not item.is_unlocked %}
+                        <small class="d-block mt-2 ms-4" data-lock-description>
+                          {% if item.unlock_type == 'STUDY_TIME' %}
+                            Hoàn thành bài trước hoặc học đủ {{ item.unlock_required_minutes }} phút.
+                          {% else %}
+                            Hoàn thành bài học trước.
+                          {% endif %}
+                        </small>
+                      {% endif %}
+                    </a>
+                  {% empty %}
+                    <p class="p-3 text-muted small mb-0">Chương này chưa có bài học.</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </section>
+          {% empty %}
+            <p class="p-4 text-center text-muted mb-0">Khóa học chưa có chương nào.</p>
+          {% endfor %}
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+{% if lesson %}
+  <form id="learning-csrf-form" class="d-none">{% csrf_token %}</form>
+  <div id="lesson-study-tracker"
+       data-url="{% url 'track_lesson_study' course.id lesson.id %}"
+       data-video-url="{% url 'track_video_progress' course.id lesson.id %}"
+       data-completion-url="{% url 'record_lesson_completion' course.id lesson.id %}"
+       data-lesson-type="{{ lesson.lesson_type }}"
+       data-video-provider="{% if lesson.is_youtube_video %}youtube{% else %}other{% endif %}"
+       data-video-threshold="{{ lesson.required_watch_percent }}"
+       data-watched-seconds="{{ watched_seconds }}"
+       data-next-lesson-id="{% if next_lesson %}{{ next_lesson.id }}{% endif %}"
+       data-next-lesson-unlocked="{% if next_lesson.is_unlocked %}true{% else %}false{% endif %}"></div>
+  <script src="{% static 'app/js/learning.js' %}"></script>
+{% endif %}
+{% endblock learning %}
