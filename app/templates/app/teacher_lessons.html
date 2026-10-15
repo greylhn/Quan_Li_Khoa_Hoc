@@ -1,0 +1,256 @@
+{% extends 'app/base_instructor.html' %}
+
+{% block title %}Quản lý bài giảng - PTIT24{% endblock %}
+
+{% block page_title %}Quản lý bài giảng{% endblock %}
+
+{% block extra_css %}
+<style>
+    .teacher-lessons-shell {
+        background: transparent;
+    }
+
+    .teacher-lessons-shell .card,
+    .teacher-lessons-shell .table,
+    .teacher-lessons-shell .input-group-text,
+    .teacher-lessons-shell .form-control,
+    .teacher-lessons-shell .form-select {
+        color: #f8fafc !important;
+    }
+
+    .teacher-lessons-shell .card {
+        background: linear-gradient(180deg, rgba(10, 16, 28, 0.98), rgba(15, 23, 42, 0.96)) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
+    }
+
+    .teacher-lessons-shell .table {
+        background: transparent !important;
+        color: #f8fafc !important;
+    }
+
+    .teacher-lessons-shell .table thead th {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border-color: rgba(148, 163, 184, 0.2) !important;
+        color: #cbd5e1 !important;
+        letter-spacing: 0.08em;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .teacher-lessons-shell .table td {
+        background: transparent !important;
+        border-color: rgba(148, 163, 184, 0.18) !important;
+        color: #f8fafc !important;
+    }
+
+    .teacher-lessons-shell .table tbody tr:hover {
+        background: rgba(148, 163, 184, 0.04) !important;
+    }
+
+    .teacher-lessons-shell .input-group-text,
+    .teacher-lessons-shell .form-control,
+    .teacher-lessons-shell .form-select {
+        background: rgba(15, 23, 42, 0.78) !important;
+        border: 1px solid rgba(148, 163, 184, 0.22) !important;
+    }
+
+    .teacher-lessons-shell .form-control::placeholder,
+    .teacher-lessons-shell .text-muted,
+    .teacher-lessons-shell .text-secondary,
+    .teacher-lessons-shell .small {
+        color: #94a3b8 !important;
+    }
+
+    .teacher-lessons-shell .text-dark,
+    .teacher-lessons-shell h6,
+    .teacher-lessons-shell .fw-bold {
+        color: #f8fafc !important;
+    }
+</style>
+{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid p-0 teacher-lessons-shell">
+    
+    <!-- Tiêu đề trang & Nút thêm bài giảng kích hoạt Modal -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">Quản lý bài giảng</h4>
+            <p class="text-muted small mb-0">Quản lý toàn bộ nội dung bài học trong các khóa học của bạn.</p>
+        </div>
+        <!-- Nút bấm mở Modal chọn khóa học -->
+        <button type="button" class="btn btn-primary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#selectCourseModal">
+            <i class="bi bi-plus-lg"></i> Thêm bài giảng
+        </button>
+    </div>
+
+    <!-- Thanh tìm kiếm và bộ lọc -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <form method="GET" action="" class="row g-3 align-items-center">
+            <!-- Ô tìm kiếm bài giảng -->
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0 ps-3 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        name="q" 
+                        value="{{ search_query }}" 
+                        class="form-control bg-light border-0 py-2 small" 
+                        placeholder="Tìm kiếm bài giảng..."
+                    >
+                </div>
+            </div>
+
+            <!-- Lọc theo khóa học -->
+            <div class="col-md-4">
+                <select name="course" class="form-select bg-light border-0 py-2 small text-secondary" onchange="this.form.submit()">
+                    <option value="">Tất cả khóa học</option>
+                    {% for c in my_courses %}
+                    <option value="{{ c.id }}" {% if selected_course == c.id|stringformat:"s" %}selected{% endif %}>{{ c.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Lọc theo trạng thái -->
+            <div class="col-md-3">
+                <select name="status" class="form-select bg-light border-0 py-2 small text-secondary" onchange="this.form.submit()">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Công khai</option>
+                    <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>Riêng tư</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bảng danh sách bài giảng dạng bảng -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="py-3 ps-4" style="width: 60px;">STT</th>
+                        <th class="py-3" style="width: 70px;">Ảnh</th>
+                        <th class="py-3">Tiêu đề bài giảng</th>
+                        <th class="py-3">Khóa học</th>
+                        <th class="py-3">Thời lượng</th>
+                        <th class="py-3">Ngày tạo</th>
+                        <th class="py-3">Trạng thái</th>
+                        <th class="py-3 text-end pe-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lesson in lessons %}
+                    <tr>
+                        <td class="ps-4 fw-medium text-secondary">{{ forloop.counter }}</td>
+                        <td>
+                            {% if lesson.chapter.course.thumbnail %}
+                                <div class="course-image-frame course-image-frame--mini">
+                                    <img src="{{ lesson.chapter.course.thumbnail.url }}" alt="" class="course-thumbnail-image">
+                                    <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+                                </div>
+                            {% else %}
+                                <div class="course-image-frame course-image-frame--mini">
+                                    <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <h6 class="fw-bold text-dark mb-0 fs-6">{{ lesson.title }}</h6>
+                            <span class="text-muted" style="font-size: 11px;">Chương: {{ lesson.chapter.title }}</span>
+                        </td>
+                        <td>
+                            <span class="text-secondary small fw-medium">{{ lesson.chapter.course.title }}</span>
+                        </td>
+                        <!-- Cột Thời lượng -->
+                        <td>
+                            <span class="text-muted small fw-medium">
+                                {% if lesson.duration %}
+                                    {{ lesson.duration }} phút
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </span>
+                        </td>
+
+                        <!-- Cột Ngày tạo -->
+                         <td>
+                            <span class="text-muted small">
+                                {% if lesson.created_at %}
+                                    {{ lesson.created_at|date:"d/m/Y" }}
+                                {% else %}
+                                    --
+                                {% endif %}    
+                            </span>
+                        </td>
+                        <td>
+                            {% if lesson.status == 'inactive' %}
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5 rounded-pill fw-normal small">Riêng tư</span>
+                            {% else %}
+                                <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-pill fw-normal small">Công khai</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <!-- Nút Chỉnh sửa bài giảng -->
+                                <a href="{% url 'edit_lesson' lesson.id %}" class="btn btn-sm rounded-circle p-2 shadow-sm text-decoration-none" style="background-color: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35);" title="Chỉnh sửa bài giảng">
+                                    <i class="bi bi-pencil-square fs-6"></i>
+                                </a>
+                                <!-- Nút Xóa bài giảng -->
+                                <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-light btn-sm rounded-circle p-2 shadow-sm text-danger text-decoration-none" title="Xóa bài giảng" onclick="return confirm('Bạn có chắc chắn muốn xóa bài giảng này?');">
+                                    <i class="bi bi-trash fs-6"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted small">
+                            Chưa có bài giảng nào trong hệ thống.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Chọn khóa học để thêm bài giảng -->
+<div class="modal fade" id="selectCourseModal" tabindex="-1" aria-labelledby="selectCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="selectCourseModalLabel">Chọn khóa học cần thêm bài giảng</h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-muted small mb-3">Vui lòng chọn khóa học bên dưới để đi đến trang quản lý chi tiết và thêm bài giảng:</p>
+
+                <!-- Ô input tìm kiếm nhanh -->
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" id="courseSearchInput" class="form-control border-start-0 shadow-none" placeholder="Nhập tên khóa học cần tìm..." onkeyup="filterCourseModal()">
+                </div>
+
+                <div class="list-group list-group-flush border rounded-3 shadow-sm" style="max-height: 250px; overflow-y: auto;">
+                    {% for c in my_courses %}
+                    <a href="{% url 'course_detail_instructor' c.id %}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3">
+                        <span class="fw-medium text-dark">{{ c.title }}</span>
+                        <i class="bi bi-chevron-right text-muted small"></i>
+                    </a>
+                    {% empty %}
+                    <div class="text-center py-3 text-muted small">Bạn chưa phụ trách khóa học nào.</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4 py-2 text-secondary fw-medium" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

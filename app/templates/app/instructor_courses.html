@@ -1,0 +1,190 @@
+{% extends "app/base_instructor.html" %}
+
+{% block title %}
+Khóa học của tôi - PTIT214
+{% endblock title %}
+
+{% block extra_css %}
+<style>
+    .instructor-courses-shell {
+        background: transparent;
+    }
+    .instructor-courses-shell .card,
+    .instructor-courses-shell .form-control,
+    .instructor-courses-shell .form-select,
+    .instructor-courses-shell .input-group-text,
+    .instructor-courses-shell .card-body,
+    .instructor-courses-shell .text-muted,
+    .instructor-courses-shell .text-dark,
+    .instructor-courses-shell h5,
+    .instructor-courses-shell h3,
+    .instructor-courses-shell p,
+    .instructor-courses-shell span,
+    .instructor-courses-shell td,
+    .instructor-courses-shell th {
+        color: #f8fafc !important;
+    }
+    .instructor-courses-shell .card {
+        background: linear-gradient(180deg, rgba(10, 16, 28, 0.98), rgba(15, 23, 42, 0.96)) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    }
+    .instructor-courses-shell .bg-light,
+    .instructor-courses-shell .bg-white {
+        background: rgba(15, 23, 42, 0.78) !important;
+    }
+    .instructor-courses-shell .form-control,
+    .instructor-courses-shell .form-select,
+    .instructor-courses-shell .input-group-text {
+        background: rgba(15, 23, 42, 0.78) !important;
+        border: 1px solid rgba(148, 163, 184, 0.22) !important;
+    }
+    .instructor-courses-shell .card-body,
+    .instructor-courses-shell .card-img-top {
+        background: transparent !important;
+    }
+</style>
+{% endblock %}
+
+{% block instructor_content %}
+
+<div class="container-fluid py-4 instructor-courses-shell">
+
+    <!-- Tiêu đề trang & Nút tạo mới -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                Khóa học của tôi
+            </h3>
+            <p class="text-muted mb-0">
+                Quản lý các khóa học bạn đang phụ trách.
+            </p>
+        </div>
+
+        <a href="{% url 'create_course' %}" class="btn btn-primary rounded-3">
+            <i class="bi bi-plus-lg me-1"></i>
+            Tạo khóa học
+        </a>
+    </div>
+
+    <!-- Thanh tìm kiếm và bộ lọc trạng thái -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <form method="GET" action="" class="row g-3 align-items-center">
+            <!-- Ô nhập từ khóa tìm kiếm -->
+            <div class="col-12 col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0 ps-3 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        name="q" 
+                        value="{{ search_query }}" 
+                        class="form-control bg-light border-0 py-2 small" 
+                        placeholder="Tìm kiếm theo tên khóa học..."
+                    >
+                </div>
+            </div>
+
+            <!-- Bộ lọc trạng thái -->
+            <div class="col-12 col-md-4">
+                <select name="status" class="form-select bg-light border-0 py-2 small text-secondary" onchange="this.form.submit()">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Đang hoạt động</option>
+                    <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>Tạm ngưng</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    {% if courses %}
+
+    <!-- Lưới danh sách khóa học -->
+    <div class="row g-4">
+        {% for course in courses %}
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column">
+
+                <!-- Ảnh thumbnail khóa học -->
+                <div class="course-image-frame">
+                    {% if course.thumbnail %}
+                    <img src="{{ course.thumbnail.url }}" class="course-thumbnail-image" alt="{{ course.title }}">
+                    <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+                    {% else %}
+                    <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+                    {% endif %}
+                </div>
+
+                <!-- Nội dung bên trong thẻ card -->
+                <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                    <h5 class="fw-bold text-dark mb-2">
+                        {{ course.title }}
+                    </h5>
+
+                    <p class="text-muted small mb-3">
+                        {{ course.description|truncatewords:20 }}
+                    </p>
+
+                    <!-- Thống kê nhỏ (Số chương & học viên) -->
+                    <div class="d-flex gap-3 text-muted small mb-4 mt-auto">
+                        <span>
+                            <i class="bi bi-collection me-1 text-primary"></i>
+                            {{ course.chapters.count }} chương
+                        </span>
+                        <span>
+                            <i class="bi bi-people me-1 text-success"></i>
+                            {{ course.enrollment_count|default:course.enrollments.count }} học viên
+                        </span>
+                    </div>
+
+                    <!-- Các nút hành động (Quản lý, Sửa, Xóa) -->
+                    <div class="vstack gap-2">
+                        <!-- Nút Quản lý Chương & Bài học -->
+                        <a href="{% url 'course_detail_instructor' course.id %}" class="btn btn-primary btn-sm rounded-3 w-100 fw-semibold py-2">
+                            <i class="bi bi-gear-fill me-1"></i> Quản lý khóa học
+                        </a>
+
+                        <!-- Hàng nút Sửa và Xóa phụ trợ -->
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'edit_course' course.id %}" class="btn btn-outline-warning btn-sm rounded-3 flex-grow-1 fw-medium text-dark">
+                                <i class="bi bi-pencil-square me-1"></i> Sửa
+                            </a>
+
+                            <form action="{% url 'delete_course' course.id %}" method="POST" class="flex-grow-1 m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-3 w-100 fw-medium" onclick="return confirm('Bạn có chắc chắn muốn xóa khóa học này không? Hành động này không thể hoàn tác!');">
+                                    <i class="bi bi-trash-fill me-1"></i> Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+
+    <!-- Trạng thái khi chưa có khóa học nào hoặc không tìm thấy kết quả -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-search display-4 text-muted"></i>
+            <h5 class="fw-bold mt-3">
+                Không tìm thấy khóa học
+            </h5>
+            <p class="text-muted mb-4">
+                Không có khóa học nào khớp với từ khóa hoặc bộ lọc tìm kiếm của bạn.
+            </p>
+            <a href="{% url 'teacher_courses' %}" class="btn btn-outline-primary rounded-3 px-4 py-2">
+                Xem tất cả khóa học
+            </a>
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock instructor_content %}

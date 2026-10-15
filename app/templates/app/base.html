@@ -8,6 +8,11 @@
       {% block title %}PTIT24 - Nền tảng học trực tuyến{% endblock title %}
     </title>
 
+    <!-- Google Font Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Bootstrap 5 CSS -->
     <link
       rel="stylesheet"
@@ -21,47 +26,658 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!--  CSS  -->
+    <!-- Midnight Tech Global Theme CSS -->
+    <style>
+      :root {
+        --dark-bg: #070b14;
+        --dark-surface: #0f172a;
+        --dark-card: #111a2e;
+        --dark-border: rgba(255, 255, 255, 0.08);
+        --dark-border-hover: rgba(96, 165, 250, 0.4);
+        --dark-text-main: #f8fafc;
+        --dark-text-muted: #94a3b8;
+        --dark-primary: #3b82f6;
+      }
+
+      body {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+        background-color: var(--dark-bg) !important;
+        color: var(--dark-text-main) !important;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ==========================================================
+         GLOBAL DARK RESETS FOR ALL BOOTSTRAP COMPONENTS
+         ========================================================== */
+      .bg-light, .bg-white {
+        background-color: #0c1220 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .table-light, .btn-light {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .text-dark {
+        color: #f8fafc !important;
+      }
+
+      .text-muted, .text-secondary {
+        color: #94a3b8 !important;
+      }
+
+      .bg-primary-subtle { background-color: rgba(59,130,246,0.16) !important; color: #93c5fd !important; }
+      .bg-success-subtle { background-color: rgba(16,185,129,0.16) !important; color: #6ee7b7 !important; }
+      .bg-info-subtle { background-color: rgba(6,182,212,0.16) !important; color: #67e8f9 !important; }
+      .bg-warning-subtle { background-color: rgba(245,158,11,0.16) !important; color: #fcd34d !important; }
+      .bg-danger-subtle { background-color: rgba(239,68,68,0.16) !important; color: #fca5a5 !important; }
+      .bg-secondary-subtle { background-color: rgba(148,163,184,0.16) !important; color: #cbd5e1 !important; }
+
+      .badge.bg-primary-subtle,
+      .badge.bg-primary.bg-opacity-10 {
+        background-color: rgba(59,130,246,0.18) !important;
+        border: 1px solid rgba(96,165,250,0.42);
+        color: #bfdbfe !important;
+      }
+      .badge.bg-success-subtle,
+      .badge.bg-success.bg-opacity-10 {
+        background-color: rgba(16,185,129,0.18) !important;
+        border: 1px solid rgba(52,211,153,0.42);
+        color: #a7f3d0 !important;
+      }
+      .badge.bg-info-subtle,
+      .badge.bg-info.bg-opacity-10 {
+        background-color: rgba(6,182,212,0.18) !important;
+        border: 1px solid rgba(34,211,238,0.42);
+        color: #a5f3fc !important;
+      }
+      .badge.bg-warning-subtle,
+      .badge.bg-warning.bg-opacity-10 {
+        background-color: rgba(245,158,11,0.18) !important;
+        border: 1px solid rgba(251,191,36,0.42);
+        color: #fde68a !important;
+      }
+      .badge.bg-danger-subtle,
+      .badge.bg-danger.bg-opacity-10 {
+        background-color: rgba(239,68,68,0.18) !important;
+        border: 1px solid rgba(248,113,113,0.42);
+        color: #fecaca !important;
+      }
+      .badge.bg-secondary-subtle,
+      .badge.bg-secondary.bg-opacity-10 {
+        background-color: rgba(148,163,184,0.18) !important;
+        border: 1px solid rgba(203,213,225,0.32);
+        color: #e2e8f0 !important;
+      }
+      .badge { font-weight: 700; }
+
+      .card {
+        background-color: #0f172a !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: #f8fafc !important;
+        border-radius: 18px !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .card:hover {
+        border-color: rgba(96, 165, 250, 0.35) !important;
+      }
+
+      .card-header, .card-footer {
+        background-color: #111a2e !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+        color: #f8fafc !important;
+      }
+
+      .form-control, .form-select, .input-group-text {
+        background-color: #111827 !important;
+        border: 1px solid #334155 !important;
+        color: #ffffff !important;
+        border-radius: 12px !important;
+      }
+
+      .form-control:focus, .form-select:focus, .input-group-text:focus {
+        background-color: #162032 !important;
+        border-color: #3b82f6 !important;
+        color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+      }
+
+      .form-control::placeholder {
+        color: #64748b !important;
+      }
+
+      .form-select option {
+        background-color: #0f172a;
+        color: #f8fafc;
+      }
+
+      .table {
+        --bs-table-color: #f8fafc;
+        --bs-table-bg: transparent;
+        --bs-table-border-color: rgba(255, 255, 255, 0.08);
+        --bs-table-striped-bg: rgba(255, 255, 255, 0.025);
+        --bs-table-hover-bg: rgba(255, 255, 255, 0.04);
+        color: #f8fafc !important;
+      }
+
+      .table th {
+        color: #94a3b8 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .table td {
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .table thead.table-light th,
+      .table thead.table-light td {
+        background-color: #0f172a !important;
+        color: #94a3b8 !important;
+      }
+
+      .list-group-item {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .dropdown-menu, .modal-content, .offcanvas {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .dropdown-item { color: #f8fafc; }
+      .dropdown-item:hover, .dropdown-item:focus {
+        background-color: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+      }
+
+      .btn-light:hover {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+      }
+
+      .breadcrumb-item a {
+        color: #60a5fa !important;
+      }
+
+      .breadcrumb-item.active {
+        color: #f1f5f9 !important;
+      }
+
+      .breadcrumb-item + .breadcrumb-item::before {
+        color: #64748b !important;
+      }
+
+      .border, .border-top, .border-bottom, .border-start, .border-end {
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+        border: none !important;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.5) !important;
+      }
+
+      .btn-outline-primary {
+        border-color: rgba(59, 130, 246, 0.5) !important;
+        color: #60a5fa !important;
+      }
+
+      .btn-outline-primary:hover {
+        background-color: #2563eb !important;
+        color: #ffffff !important;
+      }
+
+      .btn-outline-secondary {
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        color: #cbd5e1 !important;
+      }
+
+      .btn-outline-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+      }
+
+      .nav-pills .nav-link {
+        color: #94a3b8 !important;
+        border-radius: 10px !important;
+        transition: all 0.2s ease;
+      }
+
+      .nav-pills .nav-link:hover {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.06) !important;
+      }
+
+      .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+        color: #ffffff !important;
+      }
+
+      .progress {
+        background-color: #1e293b !important;
+        border-radius: 9999px !important;
+      }
+
+      /* ==========================================================
+         NAVBAR (MIDNIGHT TECH DARK GLASS)
+         ========================================================== */
+      .app-navbar {
+        background: rgba(7, 11, 20, 0.88) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border-bottom: 1px solid var(--dark-border) !important;
+        transition: all 0.3s ease;
+        min-height: 68px;
+      }
+
+      .app-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none !important;
+      }
+
+      .brand-icon-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      }
+
+      .brand-name {
+        font-weight: 800;
+        font-size: 1.35rem;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .app-nav-link {
+        color: var(--dark-text-muted) !important;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 9px 13px !important;
+        border-radius: 999px;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        text-decoration: none !important;
+      }
+
+      .app-nav-link:hover {
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      /* KHI ACTIVE SẼ PHÁT SÁNG XANH NEON */
+      .app-nav-link.active {
+        color: #60a5fa !important;
+        font-weight: 700 !important;
+        background: rgba(59, 130, 246, 0.15) !important;
+        border: 1px solid rgba(59, 130, 246, 0.35) !important;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.25) !important;
+      }
+
+      /* Navbar Search */
+      .nav-search-input {
+        width: 220px;
+        background-color: #111827 !important;
+        border: 1px solid #334155 !important;
+        color: #ffffff !important;
+        font-size: 0.85rem !important;
+        transition: all 0.25s ease;
+      }
+
+      .nav-search-input::placeholder { color: #64748b; }
+
+      .nav-search-input:focus {
+        background-color: #162032 !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+        color: #ffffff !important;
+      }
+
+      .nav-search-submit {
+        position: absolute;
+        top: 50%;
+        right: 5px;
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        transform: translateY(-50%);
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: #94a3b8;
+      }
+
+      .nav-search-submit:hover { color: #93c5fd; }
+
+      .app-nav-links { gap: 3px; }
+
+      .navbar-collapse { align-items: center; }
+
+      /* User Profile Dropdown */
+      .user-dropdown-btn {
+        color: #f8fafc !important;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 50px;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--dark-border);
+      }
+
+      .user-dropdown-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .user-dropdown-name {
+        display: inline-block;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .user-avatar-img {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border: 2px solid #3b82f6;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+      }
+
+      .dark-dropdown-menu {
+        background-color: #0f172a !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 18px 40px -5px rgba(0, 0, 0, 0.8) !important;
+        padding: 6px !important;
+      }
+
+      .dark-dropdown-menu .dropdown-item {
+        color: #cbd5e1 !important;
+        border-radius: 8px !important;
+        font-size: 0.85rem !important;
+        padding: 8px 12px !important;
+        transition: all 0.2s ease;
+      }
+
+      .dark-dropdown-menu .dropdown-item:hover {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+      }
+
+      .dark-dropdown-menu .dropdown-divider {
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      /* Guest Buttons */
+      .btn-nav-login {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: #f1f5f9 !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        padding: 7px 18px !important;
+        border-radius: 50px !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+      }
+
+      .btn-nav-login:hover {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        color: #ffffff !important;
+      }
+
+      .btn-nav-register {
+        background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+        border: none !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        padding: 7px 20px !important;
+        border-radius: 50px !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
+        transition: all 0.2s ease;
+      }
+
+      .btn-nav-register:hover {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.55) !important;
+      }
+
+      /* Navbar toggler dark mode */
+      .navbar-toggler-dark {
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        padding: 6px 10px !important;
+      }
+
+      .navbar-toggler-dark .navbar-toggler-icon {
+        filter: invert(1);
+      }
+
+      /* ==========================================================
+         FOOTER (MIDNIGHT TECH DARK)
+         ========================================================== */
+      .app-footer {
+        background-color: #050811 !important;
+        border-top: 1px solid var(--dark-border);
+        color: var(--dark-text-muted);
+      }
+
+      .footer-brand-lockup {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .footer-brand-lockup .brand-icon-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 1rem;
+      }
+
+      .footer-description {
+        max-width: 390px;
+        color: var(--dark-text-muted);
+        font-size: 0.88rem;
+        line-height: 1.7;
+      }
+
+      .footer-heading {
+        margin-bottom: 14px;
+        color: #f8fafc;
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .footer-links {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .app-footer a {
+        color: var(--dark-text-muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .app-footer a:hover {
+        color: #60a5fa !important;
+        text-decoration: none;
+      }
+
+      .footer-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px 20px;
+        color: #64748b;
+        font-size: 0.78rem;
+      }
+
+      @media (max-width: 1199.98px) {
+        .app-navbar .navbar-collapse {
+          margin-top: 10px;
+          padding: 12px 0 6px;
+          border-top: 1px solid var(--dark-border);
+        }
+
+        .app-nav-links {
+          align-items: stretch;
+          gap: 2px;
+        }
+
+        .app-nav-link {
+          border-radius: 10px;
+        }
+
+        .nav-search {
+          width: 100%;
+          max-width: 420px;
+          margin: 10px 0 14px;
+        }
+
+        .nav-search-input {
+          width: 100%;
+        }
+
+        .navbar-collapse > .dropdown,
+        .navbar-collapse > .d-flex {
+          margin-bottom: 8px;
+        }
+      }
+
+      .footer-input {
+        background-color: #111827 !important;
+        border: 1px solid #334155 !important;
+        color: #ffffff !important;
+        font-size: 0.875rem !important;
+      }
+
+      .footer-input::placeholder {
+        color: #64748b;
+      }
+
+      .footer-input:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+        color: #ffffff !important;
+      }
+    </style>
+    <link rel="stylesheet" href="{% static 'app/css/course-images.css' %}">
+    {% block extra_css %}{% endblock extra_css %}
   </head>
   <body class="d-flex flex-column min-vh-100">
     <!-- NAVBAR HEADER -->
-    <nav class="navbar navbar-expand-lg bg-white sticky-top py-2 border-bottom shadow-sm">
+    <nav class="navbar navbar-expand-xl app-navbar sticky-top py-2">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-bold text-primary fs-4" href="/">
-          <i class="bi bi-mortarboard-fill me-2 fs-3"></i> PTIT24
+        <!-- Logo thương hiệu -->
+        <a class="navbar-brand app-brand" href="/">
+          <div class="brand-icon-box">
+            <i class="bi bi-mortarboard-fill"></i>
+          </div>
+          <span class="brand-name">PTIT24</span>
         </a>
+
+        <!-- Nút Toggler cho mobile -->
         <button
-          class="navbar-toggler"
+          class="navbar-toggler navbar-toggler-dark"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Mở menu điều hướng"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto ms-4 mb-2 mb-lg-0 fw-medium">
+          <!-- MENU ĐIỀU HƯỚNG VỚI HIGHLIGHT ĐỘNG THEO TRANG -->
+          <ul class="navbar-nav app-nav-links me-auto ms-lg-4 mb-2 mb-lg-0 fw-medium" id="navbarLinksList">
             <li class="nav-item">
-              <a class="nav-link active text-primary" href="/">Trang chủ</a>
+              <a 
+                class="nav-link app-nav-link {% if request.resolver_match.url_name == 'home' or request.path == '/' %}active{% endif %}" 
+                href="/" 
+                data-page="home"
+              >
+                <i class="bi bi-house-door me-1"></i> Trang chủ
+              </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="{% url 'courses' %}">Khóa học</a>
+              <a 
+                class="nav-link app-nav-link {% if request.resolver_match.url_name == 'courses' or 'courses' in request.path or 'detail-course' in request.path %}active{% endif %}" 
+                href="{% url 'courses' %}" 
+                data-page="courses"
+              >
+                <i class="bi bi-journal-code me-1"></i> Khóa học
+              </a>
             </li>
-            <li class="nav-item">
-            <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">Liên hệ</a>
-            </li>
+            {% if user.is_authenticated and user.role == 'STUDENT' %}
+              <li class="nav-item">
+                <a
+                  class="nav-link app-nav-link {% if request.resolver_match.url_name == 'my_courses' %}active{% endif %}"
+                  href="{% url 'my_courses' %}"
+                  data-page="my-courses"
+                >
+                  <i class="bi bi-play-circle me-1"></i> Khóa học của tôi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link app-nav-link {% if 'saved-course' in request.path %}active{% endif %}"
+                  href="{% url 'saved_courses' %}"
+                  data-page="saved"
+                >
+                  <i class="bi bi-bookmark-heart me-1"></i> Đã lưu
+                </a>
+              </li>
+            {% endif %}
           </ul>
 
           <!-- Search bar header -->
-          <form class="nav-search me-3 position-relative d-none d-xl-block" method = "POST" action = "{% url "search" %}" >
-            {% csrf_token %}
+          <form class="nav-search me-lg-3 position-relative" method="GET" action="{% url 'search' %}">
             <input
-              type="text"
-              class="form-control rounded-pill bg-light ps-4 pe-5 border-0"
+              type="search"
+              class="form-control rounded-pill nav-search-input ps-4 pe-5"
               placeholder="Tìm khóa học..."
-              name = "searched"
+              aria-label="Tìm khóa học"
+              name="q"
             />
-            <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+            <button type="submit" class="nav-search-submit" aria-label="Tìm kiếm">
+              <i class="bi bi-search"></i>
+            </button>
           </form>
 
           <!-- USER PROFILE / AUTH BUTTONS -->
@@ -69,30 +685,36 @@
             <div class="dropdown">
               <a
                 href="#"
-                class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle fw-semibold"
+                class="d-flex align-items-center text-decoration-none dropdown-toggle user-dropdown-btn"
                 id="userDropdown"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <img
-                  src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username }}&background=1a56db&color=fff&rounded=true"
-                  alt="Avatar"
-                  width="38"
-                  height="38"
-                  class="rounded-circle me-2 object-fit-cover"
-                />
-                <span>{{ user.get_full_name|default:user.username }}</span>
+                {% if user.avatar and user.avatar.name %}
+                  <img
+                    src="{{ user.avatar.url }}"
+                    alt="Avatar"
+                    width="36"
+                    height="36"
+                    class="rounded-circle me-2 object-fit-cover user-avatar-img"
+                  />
+                {% else %}
+                  <span class="rounded-circle me-2 user-avatar-img d-inline-flex align-items-center justify-content-center text-white bg-primary fw-bold">
+                    {{ user.get_full_name|default:user.username|first|upper }}
+                  </span>
+                {% endif %}
+                <span class="user-dropdown-name">{{ user.get_full_name|default:user.username }}</span>
               </a>
 
-              <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 rounded-3" aria-labelledby="userDropdown">
+              <ul class="dropdown-menu dropdown-menu-end dark-dropdown-menu mt-2" aria-labelledby="userDropdown">
                 <li>
-                  <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url "profile" %}">
+                  <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'profile' %}">
                     <i class="bi bi-person-circle fs-5 text-primary"></i> Xem trang cá nhân
                   </a>
                 </li>
                 <li><hr class="dropdown-divider my-1" /></li>
                 <li>
-                  <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger" href="{% url 'logout' %}">
+                  <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{% url 'logout' %}">
                     <i class="bi bi-box-arrow-right fs-5"></i> Đăng xuất
                   </a>
                 </li>
@@ -100,91 +722,105 @@
             </div>
           {% else %}
             <div class="d-flex align-items-center gap-2">
-              <a href="/login" class="btn btn-outline-primary rounded-pill px-3">Đăng nhập</a>
-              <a href="/register" class="btn btn-primary rounded-pill px-3">Đăng ký</a>
+              <a href="{% url 'login' %}" class="btn-nav-login">Đăng nhập</a>
+              <a href="{% url 'register' %}" class="btn-nav-register">Đăng ký</a>
             </div>
           {% endif %}
         </div>
       </div>
     </nav>
+
     <!-- Main Content Block -->
-<main class="flex-grow-1">
-    {% block main-content %}{% endblock main-content %}
-    {% block register %}{% endblock register %}
-    {% block login %}{% endblock login %}
-    {% block courses %}{% endblock courses %}
-    {% block detail-courses %}{% endblock detail-courses %}
-    {% block learning %}{% endblock learning %}
-    {% block search %}{% endblock search %}
-    {% block checkout %}{% endblock checkout %}
-    {% block teacher %}{% endblock teacher %}
-    {% block profile %}{% endblock profile %}
-  </main>
+    <main class="flex-grow-1">
+      {% block main-content %}{% endblock main-content %}
+      {% block register %}{% endblock register %}
+      {% block login %}{% endblock login %}
+      {% block courses %}{% endblock courses %}
+      {% block detail-courses %}{% endblock detail-courses %}
+      {% block learning %}{% endblock learning %}
+      {% block search %}{% endblock search %}
+      {% block checkout %}{% endblock checkout %}
+      {% block teacher %}{% endblock teacher %}
+      {% block profile %}{% endblock profile %}
+      {% block saved_courses_page %}{% endblock saved_courses_page %}
+    </main>
 
-    <footer class="bg-dark text-white pt-5 pb-3 mt-auto">
-      <div class="container">
-        <div class="row g-4 mb-4">
-          <!-- Cột 1: Thông tin thương hiệu -->
-          <div class="col-12 col-md-4">
-            <h4 class="fw-bold text-primary d-flex align-items-center gap-2 mb-3">
-              <i class="bi bi-mortarboard-fill"></i> PTIT214
-            </h4>
-            <p class="text-secondary small mb-3">
-              Học mọi lúc, mọi nơi, kiến tạo tương lai cùng nền tảng giáo dục trực tuyến chất lượng cao.
-            </p>
-            <div class="d-flex gap-3 text-secondary">
-              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-facebook fs-5"></i></a>
-              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-youtube fs-5"></i></a>
-              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-twitter-x fs-5"></i></a>
-              <a href="#" class="text-secondary text-decoration-none"><i class="bi bi-linkedin fs-5"></i></a>
-            </div>
-          </div>
-
-          <!-- Cột 2: Liên kết nhanh -->
-          <div class="col-6 col-md-2">
-            <h6 class="fw-bold mb-3">Liên kết nhanh</h6>
-            <ul class="list-unstyled text-secondary small d-flex flex-column gap-2 mb-0">
-              <li><a href="/" class="text-secondary text-decoration-none">Trang chủ</a></li>
-              <li><a href="{% url 'courses' %}" class="text-secondary text-decoration-none">Khóa học</a></li>
-              <li><a href="#" class="text-secondary text-decoration-none">Giới thiệu</a></li>
-              <li><a href="#" class="text-secondary text-decoration-none">Liên hệ</a></li>
-            </ul>
-          </div>
-
-          <!-- Cột 3: Hỗ trợ -->
-          <div class="col-6 col-md-2">
-            <h6 class="fw-bold mb-3">Hỗ trợ</h6>
-            <ul class="list-unstyled text-secondary small d-flex flex-column gap-2 mb-0">
-              <li><a href="#" class="text-secondary text-decoration-none">FAQ</a></li>
-              <li><a href="#" class="text-secondary text-decoration-none">Chính sách bảo mật</a></li>
-              <li><a href="#" class="text-secondary text-decoration-none">Điều khoản sử dụng</a></li>
-              <li><a href="#" class="text-secondary text-decoration-none">Hướng dẫn thanh toán</a></li>
-            </ul>
-          </div>
-
-          <!-- Cột 4: Đăng ký nhận tin -->
-          <div class="col-12 col-md-4">
-            <h6 class="fw-bold mb-3">Kết nối với chúng tôi</h6>
-            <div class="input-group mb-3">
-              <input type="email" class="form-control" placeholder="Nhập email của bạn">
-              <button class="btn btn-primary" type="button">Đăng ký</button>
-            </div>
-          </div>
-        </div>
-
-        <hr class="border-secondary opacity-50" />
-
-        <div class="text-center text-secondary small">
-          © 2026 PTIT24. Tất cả quyền được bảo lưu.
-        </div>
+<!-- FOOTER -->
+<footer class="app-footer pt-4 pt-lg-5 pb-3 mt-auto">
+  <div class="container">
+    <div class="row g-4 g-lg-5 pb-4">
+      <div class="col-12 col-lg-5">
+        <a href="{% url 'home' %}" class="footer-brand-lockup">
+          <span class="brand-icon-box"><i class="bi bi-mortarboard-fill"></i></span>
+          <span class="brand-name">PTIT24</span>
+        </a>
+        <p class="footer-description mb-0">
+          Nền tảng học tập trực tuyến giúp bạn khám phá khóa học, theo dõi tiến độ và học theo lộ trình của riêng mình.
+        </p>
       </div>
-    </footer>   
+
+      <div class="col-6 col-lg-3">
+        <h2 class="footer-heading">Khám phá</h2>
+        <ul class="footer-links">
+          <li><a href="{% url 'home' %}">Trang chủ</a></li>
+          <li><a href="{% url 'courses' %}">Tất cả khóa học</a></li>
+          {% if user.is_authenticated and user.role == 'STUDENT' %}
+            <li><a href="{% url 'my_courses' %}">Khóa học của tôi</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-4">
+        <h2 class="footer-heading">Tài khoản &amp; chính sách</h2>
+        <ul class="footer-links">
+          <li><a href="{% url 'term' %}">Điều khoản sử dụng</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'profile' %}">Trang cá nhân</a></li>
+            <li><a href="{% url 'logout' %}">Đăng xuất</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Đăng nhập</a></li>
+            <li><a href="{% url 'register' %}">Tạo tài khoản</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom border-top pt-3">
+      <span>© {% now "Y" %} PTIT24. Bảo lưu mọi quyền.</span>
+      <a href="{% url 'term' %}">Điều khoản sử dụng</a>
+    </div>
+  </div>
+</footer>
     <!-- JS Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'app/js/script.js' %}"></script>
     <script>
-      lucide.createIcons();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      // XỬ LÝ HIGHLIGHT SÁNG ĐÚNG TAB NAVBAR THEO ĐƯỜNG DẪN TRANG
+      document.addEventListener("DOMContentLoaded", function () {
+        const path = window.location.pathname;
+        const navLinks = document.querySelectorAll("#navbarLinksList .app-nav-link");
+
+        navLinks.forEach(link => {
+          link.classList.remove("active");
+          const page = link.getAttribute("data-page");
+
+          if (page === "home" && (path === "/" || path === "")) {
+            link.classList.add("active");
+          } else if (page === "courses" && (path.includes("courses") || path.includes("detail-course") || path.includes("search"))) {
+            link.classList.add("active");
+          } else if (page === "my-courses" && path.includes("my-courses")) {
+            link.classList.add("active");
+          } else if (page === "saved" && path.includes("saved-course")) {
+            link.classList.add("active");
+          }
+        });
+      });
     </script>
+    <script src="{% static 'app/js/course-images.js' %}" defer></script>
   </body>
 </html>

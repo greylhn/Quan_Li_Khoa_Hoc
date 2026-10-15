@@ -1,0 +1,53 @@
+{% extends 'app/base_instructor.html' %}
+{% load static %}
+
+{% block title %}Danh sách học viên - {{ course.title }} - PTIT24{% endblock %}
+{% block page_title %}Học viên của khóa: {{ course.title }}{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid px-0">
+    <div class="mb-3">
+        <a href="{% url 'teacher_course_list_for_students' %}" class="text-decoration-none text-muted small fw-semibold">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách khóa học
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <h5 class="fw-bold text-dark mb-4"><i class="bi bi-mortarboard text-primary me-2"></i>Danh sách học viên tham gia</h5>
+        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-3 rounded-start">Học viên</th>
+                        <th class="py-3">Email</th>
+                        <th class="py-3">Ngày tham gia</th>
+                        <th class="py-3 rounded-end text-center">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in enrollments %}
+                    <tr>
+                        <td class="fw-semibold text-dark">
+                            <i class="bi bi-person-circle text-secondary me-2"></i>
+                            {{ item.student.get_full_name|default:item.student.username }}
+                        </td>
+                        <td class="text-muted">{{ item.student.email }}</td>
+                        <td class="text-muted small">{{ item.created_at|date:"d/m/Y H:i" }}</td>
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success px-3 py-2">Đang học</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted fst-italic">
+                            Chưa có học viên nào đăng ký khóa học này.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

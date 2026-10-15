@@ -1,0 +1,129 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Khóa học của tôi - PTIT24{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/courses.css' %}?v=2" />
+{% endblock extra_css %}
+
+{% block profile %}
+<div class="courses-header-banner">
+  <div class="container">
+    <span class="courses-badge"><i class="bi bi-journal-bookmark-fill"></i> Không gian học tập cá nhân</span>
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+      <div>
+        <h1 class="courses-title">Khóa học của tôi</h1>
+        <p class="courses-desc">Theo dõi tiến độ và tiếp tục hành trình học tập của bạn.</p>
+      </div>
+      <nav class="nav nav-pills gap-2" aria-label="Điều hướng cá nhân">
+        <a class="nav-link active rounded-pill" href="{% url 'my_courses' %}">
+          <i class="bi bi-journal-bookmark me-1"></i>Khóa học của tôi
+        </a>
+        <a class="nav-link rounded-pill" href="{% url 'profile' %}">
+          <i class="bi bi-person me-1"></i>Hồ sơ
+        </a>
+        <a class="nav-link rounded-pill" href="{% url 'saved_courses' %}">
+          <i class="bi bi-bookmark-heart me-1"></i>Đã lưu
+        </a>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info alert-dismissible fade show rounded-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Đóng"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <section class="mb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+      <div>
+        <span class="section-tag"><i class="bi bi-play-circle-fill me-1"></i>Đang tiến hành</span>
+        <h2 class="section-heading mb-0">Tiếp tục học</h2>
+      </div>
+      <span class="text-secondary small">{{ active_enrollments|length }} khóa học</span>
+    </div>
+    <div class="row g-4">
+      {% for enrollment in active_enrollments %}
+        <div class="col-12 col-md-6 col-xl-4">
+          <article class="card h-100 overflow-hidden">
+            <div class="course-image-frame">
+              {% if enrollment.course.thumbnail and enrollment.course.thumbnail.name %}
+                <img src="{{ enrollment.course.thumbnail.url }}" class="course-thumbnail-image" alt="{{ enrollment.course.title }}">
+                <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+              {% else %}
+                <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+              {% endif %}
+            </div>
+            <div class="card-body d-flex flex-column p-4">
+              <span class="small text-secondary mb-1">
+                {{ enrollment.course.instructor.get_full_name|default:enrollment.course.instructor.username }}
+              </span>
+              <h3 class="h5 fw-bold text-white mb-3">{{ enrollment.course.title }}</h3>
+              <div class="d-flex justify-content-between small text-secondary mb-2">
+                <span>Tiến độ</span><strong class="text-white">{{ enrollment.progress }}%</strong>
+              </div>
+              <div class="progress mb-4" style="height: 7px;" role="progressbar"
+                   aria-label="Tiến độ {{ enrollment.course.title }}"
+                   aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" style="width: {{ enrollment.progress }}%; background: linear-gradient(90deg, #2563eb, #3b82f6);"></div>
+              </div>
+              <a href="{% url 'learning' enrollment.course.id %}" class="btn btn-primary rounded-pill mt-auto">
+                <i class="bi bi-play-fill me-1"></i>Tiếp tục học
+              </a>
+            </div>
+          </article>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="text-center p-5 rounded-4" style="background: #0f172a; border: 1px dashed rgba(255,255,255,.15);">
+            <i class="bi bi-journal-x display-5 d-block text-secondary mb-3"></i>
+            <h3 class="h5 text-white">Bạn chưa có khóa học đang học</h3>
+            <p class="text-secondary mb-3">Khám phá danh mục khóa học để bắt đầu lộ trình của mình.</p>
+            <a href="{% url 'courses' %}" class="btn btn-primary rounded-pill px-4">Khám phá khóa học</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+      <div>
+        <span class="section-tag"><i class="bi bi-check-circle-fill me-1"></i>Đã hoàn tất</span>
+        <h2 class="section-heading mb-0">Khóa học đã hoàn thành</h2>
+      </div>
+      <span class="text-secondary small">{{ completed_enrollments|length }} khóa học</span>
+    </div>
+    <div class="row g-3">
+      {% for enrollment in completed_enrollments %}
+        <div class="col-12 col-lg-6">
+          <article class="card h-100 p-3 d-flex flex-row align-items-center gap-3">
+            <div class="course-image-frame course-image-frame--mini">
+              {% if enrollment.course.thumbnail and enrollment.course.thumbnail.name %}
+                <img src="{{ enrollment.course.thumbnail.url }}" class="course-thumbnail-image" alt="{{ enrollment.course.title }}">
+                <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+              {% else %}
+                <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+              {% endif %}
+            </div>
+            <div class="flex-grow-1 min-w-0">
+              <h3 class="h6 fw-bold text-white mb-1">{{ enrollment.course.title }}</h3>
+              <span class="badge bg-success-subtle">Hoàn thành</span>
+            </div>
+            <a href="{% url 'learning' enrollment.course.id %}" class="btn btn-outline-primary rounded-pill btn-sm">Ôn tập</a>
+          </article>
+        </div>
+      {% empty %}
+        <div class="col-12"><p class="text-secondary mb-0">Chưa có khóa học hoàn thành.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock profile %}

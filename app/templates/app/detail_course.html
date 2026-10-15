@@ -1,90 +1,249 @@
 {% extends "app/base.html" %}
 {% load static %}
 
-{% block title %}Python cơ bản - PTIT214{% endblock title %}
+{% block title %}{{ course.title }} - PTIT24{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/detail-course.css' %}?v=1" />
+{% endblock extra_css %}
 
 {% block detail-courses %}
-<div class="container py-4">
-  <!-- Breadcrumb điều hướng -->
+<div class="container py-4 course-detail-page">
   <nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-secondary">Trang chủ</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'courses' %}" class="text-decoration-none text-secondary">Khóa học</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Python cơ bản</li>
+    <ol class="breadcrumb course-detail-breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house-door me-1"></i>Trang chủ</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'courses' %}">Khóa học</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ course.title }}</li>
     </ol>
   </nav>
 
-  <!-- Khung chi tiết khóa học -->
-  <div class="card border-0 shadow-sm rounded-4 p-4">
-    <div class="row g-4 align-items-center">
-      
-      <!-- Cột trái: Ảnh thumbnail khóa học có icon Play -->
-      <div class="col-12 col-lg-5">
-        <div class="position-relative rounded-4 overflow-hidden shadow-sm">
-          <img 
-            src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800" 
-            alt="Python cơ bản" 
-            class="img-fluid w-100 object-fit-cover" 
-            style="height: 260px;"
-          />
-          <span class="badge bg-primary position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill fw-normal">
-            Khóa học
-          </span>
-          <!-- Play Icon Overlay -->
-          <div class="position-absolute top-50 start-50 translate-middle">
-            <button class="btn btn-light rounded-circle p-3 shadow opacity-90 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-              <i class="bi bi-play-fill fs-2 text-dark ms-1"></i>
-            </button>
-          </div>
-        </div>
+  <div id="alert-container" aria-live="polite"></div>
+
+  <section class="course-detail-hero">
+    <div class="course-detail-cover">
+      {% if course.thumbnail %}
+        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-thumbnail-image" />
+        <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+      {% else %}
+        <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+      {% endif %}
+      <span class="course-detail-cover-label"><i class="bi bi-mortarboard-fill me-2"></i>Khóa học PTIT</span>
+    </div>
+
+    <div class="course-detail-intro">
+      <span class="course-detail-eyebrow"><i class="bi bi-stars me-1"></i>Học trực tuyến theo lộ trình</span>
+      <h1>{{ course.title }}</h1>
+      <p class="course-detail-description">{{ course.description|linebreaksbr }}</p>
+
+      <div class="course-detail-stats" aria-label="Thông tin khóa học">
+        <div><i class="bi bi-collection"></i><strong>{{ chapters|length }}</strong><span>chương</span></div>
+        <div><i class="bi bi-play-circle"></i><strong>{{ total_lessons }}</strong><span>bài học</span></div>
+        <div><i class="bi bi-clock"></i><strong>{{ total_minutes }}</strong><span>phút nội dung</span></div>
+        <div><i class="bi bi-people"></i><strong>{{ course.enrollment_count }}</strong><span>học viên</span></div>
       </div>
 
-      <!-- Cột phải: Thông tin khóa học -->
-      <div class="col-12 col-lg-7 d-flex flex-column justify-content-between">
-        <div>
-          <!-- Tiêu đề khóa học -->
-          <h2 class="fw-bold text-dark mb-3">{{course.title}}</h2>
-
-          <!-- Mô tả ngắn -->
-          <p class="text-muted mb-4 fs-6 leading-relaxed">
-            {{course.description}}
-          </p>
-
-          <!-- Thông tin Giảng viên -->
-          <div class="d-flex align-items-center gap-3 mb-4 pt-2 border-top">
-            <img 
-              src="https://ui-avatars.com/api/?name=Nguyen+Van+A&background=0D8ABC&color=fff" 
-              alt="Nguyễn Văn A" 
-              class="rounded-circle object-fit-cover" 
-              width="48" 
-              height="48"
-            />
-            <div>
-              <h6 class="fw-bold mb-0 text-dark">{{course.instructor.last_name}} {{course.instructor.first_name}}</h6>
-              <span class="text-muted small">{{course.instructor.bio}}</span>
-            </div>
+      {% if course.instructor %}
+        <div class="course-detail-instructor">
+          {% if course.instructor.avatar and course.instructor.avatar.name %}
+            <img src="{{ course.instructor.avatar.url }}" alt="{{ course.instructor.get_full_name|default:course.instructor.username }}" />
+          {% else %}
+            <span class="course-instructor-initial">{{ course.instructor.get_full_name|default:course.instructor.username|first|upper }}</span>
+          {% endif %}
+          <div>
+            <small>Giảng viên</small>
+            <strong>{{ course.instructor.get_full_name|default:course.instructor.username }}</strong>
+            {% if course.instructor.bio %}<p>{{ course.instructor.bio }}</p>{% endif %}
           </div>
         </div>
+      {% endif %}
 
-        <div class="d-flex flex-wrap align-items-center gap-3 pt-3 border-top">
-          {% comment %} # dang ki khoa hoc {% endcomment %}
-          <form action="{% url 'enroll_course' course.id %}" method="post">
+      <div class="course-detail-actions">
+        {% if user.is_authenticated and user.role == 'STUDENT' %}
+          {% if enrollment.status == 'ACTIVE' or enrollment.status == 'COMPLETED' %}
+            <a href="{% url 'learning' course.id %}" class="btn-course-primary">
+              <i class="bi bi-play-fill"></i>
+              {% if enrollment.status == 'COMPLETED' %}Ôn tập khóa học{% else %}Tiếp tục học{% endif %}
+            </a>
+            {% if enrollment.status == 'ACTIVE' %}
+              <span class="course-enrollment-progress"><strong>{{ enrollment.progress }}%</strong> đã hoàn thành</span>
+            {% else %}
+              <span class="course-enrollment-progress"><i class="bi bi-check-circle-fill"></i> Đã hoàn thành</span>
+            {% endif %}
+          {% elif enrollment.status == 'PAUSED' %}
+            <span class="course-enrollment-paused"><i class="bi bi-pause-circle me-1"></i>Khóa học đang tạm dừng</span>
+          {% else %}
+            <form id="enroll-form" action="{% url 'enroll_course' course.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn-course-primary">
+                <i class="bi bi-check2-circle"></i>Đăng ký khóa học
+              </button>
+            </form>
+          {% endif %}
+          <form action="{% url 'saved_course' course.id %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary rounded-3 px-4 py-2 fw-medium d-flex align-items-center gap-2 shadow-sm">
-              <i class="bi bi-cart-plus fs-5"></i> Đăng ký khóa học
+            <button type="submit" class="btn-course-secondary">
+              <i class="bi {% if is_saved %}bi-bookmark-heart-fill{% else %}bi-bookmark-heart{% endif %}"></i>
+              {% if is_saved %}Đã lưu{% else %}Lưu khóa học{% endif %}
             </button>
           </form>
-          <form action="{% url 'saved_course' course.id %}" method="post">
-              {% csrf_token %}
-          <button type="submit" class="btn btn-outline-secondary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2">
-            <i class="bi bi-bookmark fs-5"></i> Thêm vào yêu thích
-          </button>
-        </form>
-        </div>
-
+        {% elif not user.is_authenticated %}
+          <a href="{% url 'login' %}" class="btn-course-primary"><i class="bi bi-box-arrow-in-right"></i>Đăng nhập để đăng ký</a>
+          <a href="{% url 'register' %}" class="btn-course-secondary"><i class="bi bi-person-plus"></i>Tạo tài khoản</a>
+        {% endif %}
       </div>
-
     </div>
-  </div>
+  </section>
+
+  <section class="course-detail-curriculum" id="course-curriculum">
+    <div class="course-section-heading">
+      <div>
+        <span class="course-detail-eyebrow"><i class="bi bi-signpost-split me-1"></i>Lộ trình học tập</span>
+        <h2>Nội dung khóa học</h2>
+      </div>
+      {% if preview_count %}
+        <span class="course-preview-total"><i class="bi bi-unlock me-1"></i>{{ preview_count }} bài có thể xem thử</span>
+      {% endif %}
+    </div>
+
+    <div class="course-curriculum-summary">
+      <span>{{ chapters|length }} chương</span>
+      <span>{{ total_lessons }} bài học</span>
+      <span>{{ total_minutes }} phút</span>
+    </div>
+
+    <div class="accordion course-curriculum-list" id="courseCurriculumAccordion">
+      {% for chapter in chapters %}
+        <article class="accordion-item">
+          <h3 class="accordion-header" id="courseChapterHeading{{ chapter.id }}">
+            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#courseChapter{{ chapter.id }}"
+                    aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                    aria-controls="courseChapter{{ chapter.id }}">
+              <span class="course-chapter-title">
+                <span class="course-chapter-number">{{ forloop.counter|stringformat:"02d" }}</span>
+                <span><strong>{{ chapter.title }}</strong><small>{{ chapter.active_lesson_count }} bài · {{ chapter.active_duration|default:0 }} phút</small></span>
+              </span>
+            </button>
+          </h3>
+          <div id="courseChapter{{ chapter.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+               aria-labelledby="courseChapterHeading{{ chapter.id }}" data-bs-parent="#courseCurriculumAccordion">
+            <div class="course-lesson-list">
+              {% for lesson in chapter.lessons.all %}
+                <div class="course-lesson-row">
+                  <span class="course-lesson-type">
+                    {% if lesson.lesson_type == 'VIDEO' %}<i class="bi bi-play-circle"></i>
+                    {% elif lesson.lesson_type == 'ARTICLE' %}<i class="bi bi-file-text"></i>
+                    {% else %}<i class="bi bi-file-earmark"></i>{% endif %}
+                  </span>
+                  <span class="course-lesson-title">
+                    <strong>{{ lesson.title }}</strong>
+                    <small>{{ lesson.get_lesson_type_display }} · {{ lesson.duration }} phút</small>
+                  </span>
+                  {% if lesson.is_preview %}
+                    <button type="button" class="course-preview-button" data-bs-toggle="modal"
+                            data-bs-target="#lessonPreview{{ lesson.id }}">
+                      <i class="bi bi-eye me-1"></i>Xem thử
+                    </button>
+                  {% endif %}
+                </div>
+                {% if lesson.is_preview %}
+                  <div class="modal fade course-preview-modal" id="lessonPreview{{ lesson.id }}" tabindex="-1"
+                       aria-labelledby="lessonPreviewTitle{{ lesson.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <div>
+                            <small>Chương {{ chapter.order }} · Bài {{ lesson.order }}</small>
+                            <h2 class="modal-title fs-5" id="lessonPreviewTitle{{ lesson.id }}">{{ lesson.title }}</h2>
+                          </div>
+                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+                        <div class="modal-body">
+                          {% if lesson.lesson_type == 'VIDEO' and lesson.embed_video_url %}
+                            <div class="ratio ratio-16x9 mb-3">
+                              <iframe src="{{ lesson.embed_video_url }}" title="{{ lesson.title }}"
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                          {% endif %}
+                          {% if lesson.content %}
+                            <div class="course-preview-content">{{ lesson.content|linebreaks }}</div>
+                          {% endif %}
+                          {% if lesson.attachment %}
+                            <a class="course-preview-attachment" href="{{ lesson.attachment.url }}" target="_blank" rel="noopener">
+                              <i class="bi bi-file-earmark-arrow-down me-2"></i>Mở tài liệu xem thử
+                            </a>
+                          {% endif %}
+                          {% if not lesson.embed_video_url and not lesson.content and not lesson.attachment %}
+                            <p class="text-muted mb-0">Bài học xem thử chưa có nội dung để hiển thị.</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% empty %}
+                <p class="course-empty-lessons">Chương này chưa có bài học công khai.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </article>
+      {% empty %}
+        <div class="course-empty-curriculum">
+          <i class="bi bi-journal-x"></i>
+          <p>Khóa học chưa có chương trình học được công khai.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
 </div>
+
+<script>
+(() => {
+    const form = document.getElementById("enroll-form");
+    if (!form) return;
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = form.querySelector("button[type='submit']");
+        const originalContent = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Đang đăng ký...';
+
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": form.querySelector("[name=csrfmiddlewaretoken]").value,
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || "Không thể đăng ký khóa học.");
+
+            const alertContainer = document.getElementById("alert-container");
+            const alert = document.createElement("div");
+            alert.className = `alert ${data.status === "success" ? "alert-success" : "alert-info"} alert-dismissible fade show`;
+            alert.setAttribute("role", "alert");
+            alert.textContent = data.message;
+            alertContainer.replaceChildren(alert);
+
+            if (data.status === "success" && data.redirect_url) {
+                window.location.assign(data.redirect_url);
+                return;
+            }
+            button.disabled = false;
+            button.innerHTML = originalContent;
+        } catch (error) {
+            const alert = document.createElement("div");
+            alert.className = "alert alert-danger";
+            alert.setAttribute("role", "alert");
+            alert.textContent = error.message || "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại.";
+            document.getElementById("alert-container").replaceChildren(alert);
+            button.disabled = false;
+            button.innerHTML = originalContent;
+        }
+    });
+})();
+</script>
 {% endblock detail-courses %}

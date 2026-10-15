@@ -1,0 +1,368 @@
+{% extends 'app/base_instructor.html' %}
+
+{% block title %}Thống kê giảng dạy{% endblock %}
+
+{% block page_title %}Thống kê giảng dạy{% endblock %}
+
+{% block instructor_content %}
+<style>
+    .teacher-analytics { --analytics-border: rgba(148, 163, 184, 0.18); }
+    .teacher-analytics .analytics-card {
+        height: 100%;
+        border: 1px solid var(--analytics-border) !important;
+        border-radius: 14px !important;
+        background: #0f172a !important;
+        color: #f8fafc;
+        box-shadow: none !important;
+    }
+    .teacher-analytics .analytics-card-body { padding: 22px; }
+    .teacher-analytics .analytics-heading {
+        color: #f1f5f9;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    .teacher-analytics .text-dark { color: #e2e8f0 !important; }
+    .teacher-analytics .text-muted { color: #94a3b8 !important; }
+    .teacher-analytics .analytics-kpi { min-height: 104px; }
+    .teacher-analytics .analytics-kpi-value {
+        color: #f8fafc;
+        font-size: 1.8rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    .teacher-analytics .analytics-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 44px;
+    }
+    .teacher-analytics .donut-container {
+        width: 136px;
+        height: 136px;
+        border-radius: 50%;
+        background: conic-gradient(#10b981 0% {{ completed_percent }}%, #3b82f6 {{ completed_percent }}% {{ completed_percent|add:in_progress_percent }}%, #64748b {{ completed_percent|add:in_progress_percent }}% 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .teacher-analytics .donut-center {
+        width: 102px;
+        height: 102px;
+        background: #0f172a;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .teacher-analytics .trend-chart {
+        height: 188px;
+        display: flex;
+        align-items: stretch;
+        justify-content: space-around;
+        gap: 12px;
+        padding: 14px 12px 0;
+        border-radius: 10px;
+        background: #111a2e;
+    }
+    .teacher-analytics .trend-column {
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+    }
+    .teacher-analytics .trend-bar-area {
+        height: 138px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+    }
+    .teacher-analytics .trend-bar {
+        width: min(34px, 65%);
+        min-height: 3px;
+        background: #1677ff;
+        border-radius: 6px 6px 0 0;
+    }
+    .teacher-analytics .trend-label {
+        color: #94a3b8;
+        font-size: .75rem;
+        padding: 7px 0 10px;
+    }
+    .teacher-analytics .analytics-table {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e2e8f0;
+        --bs-table-hover-bg: rgba(148, 163, 184, .06);
+        --bs-table-hover-color: #f8fafc;
+        --bs-table-border-color: var(--analytics-border);
+        margin: 0;
+    }
+    .teacher-analytics .analytics-table thead th {
+        color: #94a3b8;
+        font-size: .72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+    .teacher-analytics .analytics-table td,
+    .teacher-analytics .analytics-table th { padding: 12px 10px; vertical-align: middle; }
+    .teacher-analytics .course-progress { min-width: 84px; height: 7px; background: #263449; }
+    .teacher-analytics .highlight-row {
+        border: 1px solid var(--analytics-border);
+        border-radius: 10px;
+        background: #111a2e;
+        padding: 14px;
+    }
+    @media (max-width: 767px) {
+        .teacher-analytics .analytics-card-body { padding: 16px; }
+        .teacher-analytics .trend-chart { gap: 4px; padding-inline: 4px; }
+    }
+</style>
+
+<div class="container-fluid p-0 teacher-analytics">
+    
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <p class="text-muted mb-0">Theo dõi hoạt động giảng dạy và kết quả học tập</p>
+        <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2">
+            <i class="bi bi-calendar3 me-1"></i> 6 tháng gần nhất
+        </span>
+    </div>
+
+    <!-- HÀNG THẺ KPI TỔNG QUAN (4 Ô) -->
+    <div class="row g-3 mb-3">
+        <div class="col-xl-3 col-md-6">
+            <div class="card analytics-card analytics-kpi">
+                <div class="analytics-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="analytics-icon bg-primary-subtle text-primary me-3">
+                        <i class="bi bi-journal-richtext fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted d-block small" style="font-size: 12px;">Tổng số khóa học</span>
+                        <div class="analytics-kpi-value">{{ total_courses }}</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card analytics-card analytics-kpi">
+                <div class="analytics-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="analytics-icon bg-success-subtle text-success me-3">
+                        <i class="bi bi-people fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted d-block small" style="font-size: 12px;">Tổng số học viên</span>
+                        <div class="analytics-kpi-value">{{ total_students }}</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card analytics-card analytics-kpi">
+                <div class="analytics-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="analytics-icon bg-info-subtle text-info me-3">
+                        <i class="bi bi-play-circle fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted d-block small" style="font-size: 12px;">Tổng số bài giảng</span>
+                        <div class="analytics-kpi-value">{{ total_lessons }}</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card analytics-card analytics-kpi">
+                <div class="analytics-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="analytics-icon bg-warning-subtle text-warning me-3">
+                        <i class="bi bi-award fs-4"></i>
+                    </div>
+                    <div style="min-width: 0;">
+                        <span class="text-muted d-block small" style="font-size: 12px;">Khóa nổi bật</span>
+                        <h6 class="fw-bold mb-0 text-dark text-truncate" title="{{ top_course_by_students.title|default:'Chưa có' }}">
+                            {{ top_course_by_students.title|default:"Chưa có" }}
+                        </h6>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HÀNG BIỂU ĐỒ TRỰC QUAN -->
+    <div class="row g-3 mb-3">
+        <!-- Tiến độ học tập (Động) -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card analytics-card">
+                <div class="analytics-card-body d-flex flex-column h-100">
+                <h6 class="analytics-heading mb-3">Tiến độ học tập</h6>
+                
+                <div class="d-flex align-items-center justify-content-center my-2">
+                    <div class="donut-container shadow-sm">
+                        <div class="donut-center">
+                            <h4 class="fw-bold text-success mb-0">{{ completed_percent }}%</h4>
+                            <small class="text-muted" style="font-size: 10px; font-weight: 600;">Hoàn thành</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="small">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-circle-fill text-success me-1 analytics-legend-dot"></i> Đã hoàn thành</span>
+                        <span class="fw-bold">{{ completed_percent }}%</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-circle-fill text-primary me-1 analytics-legend-dot"></i> Đang học</span>
+                        <span class="fw-bold">{{ in_progress_percent }}%</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span><i class="bi bi-circle-fill text-secondary me-1 analytics-legend-dot"></i> Chưa bắt đầu</span>
+                        <span class="fw-bold">{{ not_started_percent }}%</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Số học viên theo thời gian -->
+        <div class="col-lg-8 col-md-12">
+            <div class="card analytics-card">
+                <div class="analytics-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="analytics-heading mb-0">Lượt đăng ký theo thời gian</h6>
+                    <span class="text-muted small"><i class="bi bi-square-fill text-primary"></i> Lượt đăng ký</span>
+                </div>
+                <div class="trend-chart" role="img" aria-label="Lượt đăng ký khóa học theo tháng trong 6 tháng gần nhất">
+                    {% for month in enrollment_trend %}
+                    <div class="trend-column" title="{{ month.month_label }}: {{ month.value }} lượt đăng ký">
+                        <div class="trend-bar-area">
+                            <div class="trend-bar" style="height: {{ month.height }}%;"></div>
+                        </div>
+                        <small class="trend-label">{{ month.label }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DANH SÁCH KHÓA HỌC -->
+    <div class="row g-3 mb-3">
+        <div class="col-12">
+            <div class="card analytics-card">
+                <div class="analytics-card-body">
+                <h6 class="analytics-heading mb-3">Danh sách khóa học phụ trách</h6>
+                <div class="table-responsive">
+                    <table class="table analytics-table align-middle table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tên khóa học</th>
+                                <th>Học viên</th>
+                                <th>Tiến độ TB</th>
+                                <th class="text-end">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in course_stats %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if course.thumbnail %}
+                                            <div class="course-image-frame course-image-frame--mini">
+                                                <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-thumbnail-image">
+                                                <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+                                            </div>
+                                        {% else %}
+                                            <div class="course-image-frame course-image-frame--mini">
+                                                <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+                                            </div>
+                                        {% endif %}
+                                        <span class="fw-semibold text-dark" style="word-break: break-word; line-height: 1.3;">
+                                            {{ course.title }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info bg-opacity-10 text-info px-2 py-1 rounded-pill">
+                                        {{ course.student_count }} học viên
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                    <div class="progress course-progress">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ course.avg_progress|default:0 }}%;"></div>
+                                    </div>
+                                    <small class="text-muted">{{ course.avg_progress|default:0|floatformat:0 }}%</small>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{% url 'course_students_detail' course.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        Xem
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-3 text-muted">Chưa có khóa học nào.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- THỐNG KÊ NỔI BẬT -->
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card analytics-card">
+                <div class="analytics-card-body d-flex flex-column">
+                <h6 class="analytics-heading mb-3">Thống kê nổi bật</h6>
+                <div class="row g-3 small">
+                    <div class="col-md-4">
+                    <div class="highlight-row h-100">
+                        <span class="text-muted d-block mb-2">Nhiều học viên nhất</span>
+                        <span class="fw-bold text-primary" style="word-break: break-word;">
+                            {{ top_course_by_students.title|default:"Chưa có dữ liệu" }}
+                            {% if top_course_by_students %}
+                                <span class="badge bg-primary bg-opacity-10 text-primary ms-1">{{ top_course_by_students.student_count }} HV</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    </div>
+
+                    <div class="col-md-4">
+                    <div class="highlight-row h-100 d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Hoàn thành trung bình:</span>
+                        <span class="fw-bold text-success fs-6">{{ avg_completion_rate }}%</span>
+                    </div>
+                    </div>
+
+                    <div class="col-md-4">
+                    <div class="highlight-row h-100 d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Tổng tương tác bài giảng:</span>
+                        <span class="fw-bold text-info fs-6">{{ total_interactions }} lượt</span>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

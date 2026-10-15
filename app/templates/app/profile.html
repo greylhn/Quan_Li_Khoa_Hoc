@@ -1,24 +1,47 @@
 {% extends "app/base.html" %}
 {% load static %}
 
-{% block title %}Trang cá nhân - PTIT214{% endblock title %}
+{% block title %}Trang cá nhân - PTIT24{% endblock title %}
 
 {% block profile %}
-<div class="bg-light py-4 border-bottom">
+<!-- Thông báo Django Messages -->
+{% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show shadow-lg rounded-3" role="alert" style="background-color: #0f172a; border: 1px solid rgba(255,255,255,0.12); color: #f8fafc;">
+        <i class="bi bi-info-circle-fill me-2 text-primary"></i> {{ message }}
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% if student_profile_form and student_profile_form.errors %}
+  <div class="container mt-3">
+    <div class="alert alert-danger rounded-3" role="alert">
+      Vui lòng kiểm tra các thông tin đã nhập.
+    </div>
+  </div>
+{% endif %}
+
+<!-- Header Profile Banner -->
+<div class="py-4 border-bottom" style="background: linear-gradient(145deg, #090d16 0%, #0d1527 60%, #111d38 100%); border-color: rgba(255, 255, 255, 0.08) !important;">
   <div class="container">
     <div class="d-flex align-items-center gap-3">
-      <img
-        src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username }}&background=1a56db&color=fff&size=128"
-        alt="Avatar"
-        class="rounded-circle shadow-sm border border-3 border-white"
-        width="80"
-        height="80"
-      />
+      {% if user.avatar and user.avatar.name %}
+        <img src="{{ user.avatar.url }}" alt="Ảnh đại diện của {{ user.get_full_name|default:user.username }}"
+             class="rounded-circle shadow-lg object-fit-cover" width="80" height="80"
+             style="border: 3px solid #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);">
+      {% else %}
+        <div class="rounded-circle shadow-lg d-flex align-items-center justify-content-center text-white bg-primary fw-bold fs-2"
+             style="width: 80px; height: 80px; border: 3px solid #3b82f6;">
+          {{ user.get_full_name|default:user.username|first|upper }}
+        </div>
+      {% endif %}
       <div>
-        <h3 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h3>
-        <p class="text-muted mb-0 small">
-          <i class="bi bi-envelope me-1"></i> {{ user.email|default:"hocvien@ptit214.edu.vn" }} 
-          <span class="badge bg-primary-subtle text-primary ms-2 rounded-pill">Học viên</span>
+        <h3 class="fw-bold mb-1 text-white">{{ user.get_full_name|default:user.username }}</h3>
+        <p class="mb-0 small" style="color: #94a3b8;">
+          <i class="bi bi-envelope me-1"></i> {{ user.email|default:"hocvien@ptit24.edu.vn" }} 
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-2 rounded-pill px-3 py-1">Học viên PTIT</span>
         </p>
       </div>
     </div>
@@ -27,185 +50,74 @@
 
 <div class="container py-5">
   <div class="row g-4">
-    <!-- Cột trái: Thống kê & Điều hướng cá nhân -->
-    <div class="col-12 col-lg-3">
-      <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+    <!-- Cột trái: Điều hướng, thống kê và chỉnh sửa hồ sơ -->
+    <div class="col-12 col-lg-4">
+      <!-- Menu điều hướng cá nhân -->
+      <div class="card border-0 p-3 mb-4" style="background-color: #0f172a; border: 1px solid rgba(255, 255, 255, 0.08) !important;">
         <div class="nav flex-column nav-pills gap-1">
-          <a class="nav-link active rounded-3 d-flex align-items-center gap-2" href="#">
+          <a class="nav-link rounded-3 d-flex align-items-center gap-2" href="{% url 'my_courses' %}" style="color: #94a3b8;">
             <i class="bi bi-journal-bookmark fs-5"></i> Khóa học của tôi
           </a>
-          <a class="nav-link text-secondary rounded-3 d-flex align-items-center gap-2" href="{% url "saved_courses" %}">
+          <a class="nav-link active rounded-3 d-flex align-items-center gap-2" href="{% url 'profile' %}">
+            <i class="bi bi-person-gear fs-5"></i> Hồ sơ cá nhân
+          </a>
+          <a class="nav-link rounded-3 d-flex align-items-center gap-2" href="{% url 'saved_courses' %}" style="color: #94a3b8;">
             <i class="bi bi-bookmark-heart fs-5"></i> Khóa học đã lưu
           </a>
-          {% comment %} <a class="nav-link text-secondary rounded-3 d-flex align-items-center gap-2" href="#">
-            <i class="bi bi-award fs-5"></i> Chứng chỉ
-          </a>
-          <a class="nav-link text-secondary rounded-3 d-flex align-items-center gap-2" href="#">
-            <i class="bi bi-gear fs-5"></i> Cài đặt tài khoản
-          </a> {% endcomment %}
         </div>
       </div>
 
       <!-- Thống kê học tập -->
-      <div class="card border-0 shadow-sm rounded-4 p-4">
-        <h6 class="fw-bold mb-3">Thống kê học tập</h6>
-        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-          <span class="text-muted small">Đang học</span>
+      <div class="card border-0 p-4" style="background-color: #0f172a; border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+        <h6 class="fw-bold mb-3 text-white"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Thống kê học tập</h6>
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.06) !important;">
+          <span class="small" style="color: #94a3b8;">Đang học</span>
           <span class="fw-bold text-primary">{{ active_enrollments|length }} khóa</span>
         </div>
-        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-          <span class="text-muted small">Đã hoàn thành</span>
-          <span class="fw-bold text-success">2 khóa</span>
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.06) !important;">
+          <span class="small" style="color: #94a3b8;"><i class="bi bi-fire text-danger me-1"></i>Chuỗi hiện tại</span>
+          <span class="fw-bold text-danger">{{ streak.current_streak|default:0 }} ngày</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.06) !important;">
+          <span class="small" style="color: #94a3b8;">Chuỗi dài nhất</span>
+          <span class="fw-bold text-white">{{ streak.longest_streak|default:0 }} ngày</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.06) !important;">
+          <span class="small" style="color: #94a3b8;">Khóa đã hoàn thành</span>
+          <span class="fw-bold text-success">{{ completed_courses_count }} khóa</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.06) !important;">
+          <span class="small" style="color: #94a3b8;">Bài đã hoàn thành</span>
+          <span class="fw-bold text-info">{{ completed_lessons_count }} bài</span>
         </div>
         <div class="d-flex justify-content-between align-items-center">
-          <span class="text-muted small">Tổng thời lượng</span>
-          <span class="fw-bold text-dark">45 giờ</span>
+          <span class="small" style="color: #94a3b8;">Thời gian học</span>
+          <span class="fw-bold text-primary">{{ study_hours }} giờ {{ study_minutes_remainder }} phút</span>
         </div>
       </div>
     </div>
 
-    <!-- Cột phải: Danh sách khóa học đang học -->
-    <div class="col-12 col-lg-9">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold mb-0">Khóa học đang học</h4>
-        <span class="text-muted small">{{ active_enrollments|length }} khóa học trong tiến trình</span>
-      </div>
-
-      <div class="row g-4">
-        <!-- Khóa học đang học 1 -->
-        {% comment %} <div class="col-12 col-md-6 col-xl-4">
-          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" class="card-img-top" alt="Python" style="height: 160px; object-fit: cover;" />
-            <div class="card-body p-4 d-flex flex-column justify-content-between">
-              <div>
-                <span class="badge bg-primary-subtle text-primary mb-2">Lập trình</span>
-                <h6 class="fw-bold card-title mb-3">Python cơ bản</h6>
-                
-                <!-- Thanh Tiến độ -->
-                <div class="mb-3">
-                  <div class="d-flex justify-content-between small text-muted mb-1">
-                    <span>Tiến độ</span>
-                    <span class="fw-bold text-dark">65%</span>
-                  </div>
-                  <div class="progress" style="height: 8px;">
-                    <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <span class="text-muted extra-small d-block mt-1" style="font-size: 0.75rem;">13 / 20 bài học</span>
-                </div>
-              </div>
-
-              <a href="#" class="btn btn-primary rounded-pill w-100 fw-medium d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-play-circle-fill"></i> Tiếp tục học
-              </a>
+    <!-- Cột phải: Chỉnh sửa hồ sơ -->
+    <div class="col-12 col-lg-8">
+      <section class="card border-0 rounded-4 p-4 p-md-5"
+               style="background-color: #0f172a; border: 1px solid rgba(255,255,255,0.08) !important;">
+        <span class="badge bg-primary-subtle rounded-pill align-self-start mb-3">Tài khoản học viên</span>
+        <h4 class="fw-bold text-white mb-2"><i class="bi bi-person-gear me-2 text-primary"></i>Thông tin cá nhân</h4>
+        <p class="text-secondary mb-4">Cập nhật thông tin tài khoản để hiển thị chính xác trên nền tảng.</p>
+        <form method="post" enctype="multipart/form-data" class="d-grid gap-3">
+          {% csrf_token %}
+          {% for field in student_profile_form %}
+            <div>
+              <label for="{{ field.id_for_label }}" class="form-label small text-white">{{ field.label }}</label>
+              {{ field }}
+              {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
             </div>
-          </div>
-        </div>
-
-        <!-- Khóa học đang học 2 -->
-        <div class="col-12 col-md-6 col-xl-4">
-          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" class="card-img-top" alt="Web Frontend" style="height: 160px; object-fit: cover;" />
-            <div class="card-body p-4 d-flex flex-column justify-content-between">
-              <div>
-                <span class="badge bg-success-subtle text-success mb-2">Lập trình</span>
-                <h6 class="fw-bold card-title mb-3">Lập trình Web Frontend ReactJS</h6>
-                
-                <!-- Thanh Tiến độ -->
-                <div class="mb-3">
-                  <div class="d-flex justify-content-between small text-muted mb-1">
-                    <span>Tiến độ</span>
-                    <span class="fw-bold text-dark">30%</span>
-                  </div>
-                  <div class="progress" style="height: 8px;">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <span class="text-muted extra-small d-block mt-1" style="font-size: 0.75rem;">6 / 20 bài học</span>
-                </div>
-              </div>
-
-              <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-medium d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-play-circle-fill"></i> Tiếp tục học
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Khóa học đang học 3 -->
-        <div class="col-12 col-md-6 col-xl-4">
-          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600" class="card-img-top" alt="UI UX" style="height: 160px; object-fit: cover;" />
-            <div class="card-body p-4 d-flex flex-column justify-content-between">
-              <div>
-                <span class="badge bg-warning-subtle text-warning-emphasis mb-2">Thiết kế</span>
-                <h6 class="fw-bold card-title mb-3">Thiết Kế Giao Diện UI/UX Figma</h6>
-                
-                <!-- Thanh Tiến độ -->
-                <div class="mb-3">
-                  <div class="d-flex justify-content-between small text-muted mb-1">
-                    <span>Tiến độ</span>
-                    <span class="fw-bold text-dark">85%</span>
-                  </div>
-                  <div class="progress" style="height: 8px;">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <span class="text-muted extra-small d-block mt-1" style="font-size: 0.75rem;">17 / 20 bài học</span>
-                </div>
-              </div>
-
-              <a href="#" class="btn btn-outline-primary rounded-pill w-100 fw-medium d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-play-circle-fill"></i> Tiếp tục học
-              </a>
-            </div>
-          </div>
-        </div> {% endcomment %}
-        {% if courses %}
-  {% for course in courses %}
-    <div class="col-12 col-md-6 col-xl-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-        {% if course.thumbnail and course.thumbnail.name %}
-          <img src="{{ course.thumbnail.url }}" 
-              class="card-img-top" 
-              alt="{{ course.title }}" 
-              style="height: 160px; object-fit: cover;">
-        {% else %}
-          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" 
-              class="card-img-top" 
-              alt="{{ course.title }}" 
-              style="height: 160px; object-fit: cover;">
-        {% endif %}
-        <div class="card-body p-4 d-flex flex-column justify-content-between">
-          <div>
-            <h6 class="fw-bold card-title mb-3">{{ course.title }}</h6>
-
-            {% for enrollment in active_enrollments %}
-              {% if enrollment.course_id == course.id %}
-                <div class="mb-3">
-                  <div class="d-flex justify-content-between small text-muted mb-1">
-                    <span>Tiến độ</span>
-                    <span class="fw-bold text-dark">{{ enrollment.progress }}%</span>
-                  </div>
-                  <div class="progress" style="height: 8px;">
-                    <div class="progress-bar bg-primary" role="progressbar"
-                         style="width: {{ enrollment.progress }}%;"
-                         aria-valuenow="{{ enrollment.progress }}"
-                         aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </div>
-              {% endif %}
-            {% endfor %}
-          </div>
-
-          <a href="{% url "learning" course.id %}" class="btn btn-primary rounded-pill w-100 fw-medium d-flex align-items-center justify-content-center gap-2">
-            <i class="bi bi-play-circle-fill"></i> Tiếp tục học
-          </a>
-        </div>
-      </div>
-    </div>
-  {% endfor %}
-{% else %}
-  <p>Bạn chưa có khóa học nào đang học.</p>
-{% endif %}
-      </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary rounded-pill mt-2">
+            <i class="bi bi-check2-circle me-1"></i>Lưu hồ sơ
+          </button>
+        </form>
+      </section>
     </div>
   </div>
 </div>

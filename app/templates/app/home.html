@@ -1,192 +1,363 @@
 {% extends 'app/base.html' %} 
 {% load static %} 
+
 {% block title %}PTIT24 - Học mọi lúc, nâng tầm tương lai{% endblock title %} 
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/home.css' %}?v=3" />
+{% endblock extra_css %}
+
 {% block main-content %}
-<!-- HERO BANNER SECTION -->
-<section class="hero-section py-5 position-relative overflow-hidden">
-  <div class="container">
-    <div class="row align-items-center g-4">
+<div id="welcomeScreen" class="welcome-screen">
+  <div class="welcome-overlay"></div>
+  <div class="welcome-content">
+    <div class="welcome-logo">
+      <i class="bi bi-mortarboard-fill"></i> PTIT24
+    </div>
+    <h1>
+      Học mọi lúc. <br />
+      <span>Nâng tầm tương lai.</span>
+    </h1>
+    <p>
+      Nền tảng học trực tuyến dành cho sinh viên. Khám phá khóa học phù hợp và bắt đầu hành trình học tập của bạn.
+    </p>
+    <button type="button" class="btn-welcome" id="startLearningBtn">
+      Bắt đầu học ngay <i class="bi bi-arrow-right"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ==========================================================
+     HERO BANNER SECTION
+     ========================================================== -->
+<section class="hero-section">
+  <div class="container position-relative" style="z-index: 1;">
+    <div class="row align-items-center g-5">
+      <!-- Cột trái: Giới thiệu & Tìm kiếm -->
       <div class="col-lg-6">
-        <span
-          class="badge bg-primary-subtle text-primary fw-medium px-3 py-2 rounded-pill mb-3"
-        >
-          <i class="bi bi-star-fill text-warning me-1"></i> Nền tảng học trực
-          tuyến hàng đầu
-        </span>
-        <h1 class="display-4 fw-extrabold text-dark mb-3">
+        <div class="hero-badge">
+          <i class="bi bi-stars"></i> Nền tảng học trực tuyến thế hệ mới
+        </div>
+        <h1 class="hero-title">
           Học mọi lúc <br />
-          <span class="text-primary">Nâng tầm tương lai</span>
+          <span class="highlight">Nâng tầm tương lai</span>
         </h1>
-        <p class="text-muted lead fs-6 mb-4">
-          Khám phá hàng ngàn khóa học chất lượng từ các giảng viên hàng đầu,
-          giúp bạn phát triển kỹ năng và chinh phục mục tiêu của mình.
+        <p class="hero-desc">
+          Chọn khóa học phù hợp, học qua video, bài đọc và tài liệu, rồi theo dõi tiến độ của bạn ngay trên nền tảng.
         </p>
 
-        <!-- Search Box -->
-        <div class="card p-2 border-0 shadow-sm rounded-4 mb-4">
-          <div class="input-group">
-            <span class="input-group-text bg-transparent border-0">
-              <i class="bi bi-search text-muted"></i>
-            </span>
+        <!-- Search Box Hero -->
+        <form class="hero-search-card mb-4" method="GET" action="{% url 'search' %}" role="search">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-search text-muted ps-2" style="font-size: 1.1rem;"></i>
             <input
               type="text"
               class="form-control border-0 shadow-none"
-              placeholder="Tìm khóa học..."
+              placeholder="Bạn muốn học công nghệ gì hôm nay?"
+              aria-label="Tìm khóa học"
+              name="q"
+              required
             />
-            <button class="btn btn-primary rounded-3 px-4">Tìm kiếm</button>
+            <button type="submit" class="btn-search">Tìm kiếm</button>
           </div>
+        </form>
+
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'courses' %}" class="btn-welcome text-decoration-none">
+            Khám phá khóa học <i class="bi bi-arrow-right"></i>
+          </a>
+          {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn btn-outline-light rounded-pill px-4 py-3">
+              Tạo tài khoản
+            </a>
+          {% endif %}
         </div>
       </div>
 
-      <!-- Hero Image -->
-      <div class="col-lg-6 text-center position-relative">
-        <img
-          src="{% static 'app/images/hero-student.png' %}"
-          alt="EduPro Hero Student"
-          class="img-fluid rounded-4 shadow-lg hero-img"
-          onerror="
-            this.src =
-              'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800'
-          "
-        />
+      <!-- Cột phải: Hero Image & Tech Stats Chips -->
+      <div class="col-lg-6 text-center">
+        <div class="hero-visual-wrapper">
+          <img
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1000&auto=format&fit=crop&q=80"
+            alt="PTIT24 Hero Learning"
+            class="hero-img"
+            fetchpriority="high"
+          />
+
+          <!-- Floating learning-format card -->
+          <div class="hero-stat-chip hero-stat-chip-1">
+            <div class="hero-stat-icon">
+              <i class="bi bi-play-fill"></i>
+            </div>
+            <div class="text-start">
+              <div class="fw-bold">Học theo cách của bạn</div>
+              <small>Video · Bài đọc · Tài liệu</small>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SECTION: KHÓA HỌC NỔI BẬT  -->
-<section class="py-5 bg-light">
+<section class="home-overview-section" aria-label="Tổng quan nền tảng">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <span class="badge bg-primary-subtle text-primary rounded-pill mb-1"
-          >Khám phá ngay</span
-        >
-        <h3 class="fw-bold text-dark mb-0">Khóa học nổi bật</h3>
+    <div class="home-overview-grid">
+      <div class="home-overview-item">
+        <span class="home-overview-icon"><i class="bi bi-collection-play"></i></span>
+        <div><strong>{{ public_course_count }}</strong><span>khóa học công khai</span></div>
       </div>
-      <a
-        href="{% url 'courses' %}"
-        class="text-primary fw-semibold text-decoration-none"
-      >
-        Xem tất cả <i class="bi bi-arrow-right"></i>
+      <div class="home-overview-item">
+        <span class="home-overview-icon"><i class="bi bi-journal-text"></i></span>
+        <div><strong>{{ public_lesson_count }}</strong><span>bài học trong khóa học công khai</span></div>
+      </div>
+      <div class="home-overview-item">
+        <span class="home-overview-icon"><i class="bi bi-person-video3"></i></span>
+        <div><strong>{{ instructor_count }}</strong><span>giảng viên có khóa học</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if user.is_authenticated and student_enrollments %}
+<section class="student-continue-section">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <span class="section-tag"><i class="bi bi-play-circle-fill me-1"></i> Học tiếp</span>
+        <h2 class="section-heading mb-0">Quay lại lộ trình của bạn</h2>
+      </div>
+      <a href="{% url 'profile' %}" class="link-view-all">Tất cả khóa học của tôi <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-3">
+      {% for enrollment in student_enrollments %}
+        <div class="col-12 col-md-6 col-xl-4">
+          <article class="student-continue-card">
+            <div class="student-continue-card-top">
+              <span class="student-continue-icon"><i class="bi bi-mortarboard-fill"></i></span>
+              <span class="small text-secondary">{{ enrollment.progress }}% hoàn thành</span>
+            </div>
+            <h3>{{ enrollment.course.title }}</h3>
+            <div class="progress student-course-progress" role="progressbar"
+                 aria-label="Tiến độ {{ enrollment.course.title }}"
+                 aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" style="width: {{ enrollment.progress }}%"></div>
+            </div>
+            <a href="{% url 'learning' enrollment.course.id %}" class="student-continue-link">
+              Tiếp tục học <i class="bi bi-arrow-right"></i>
+            </a>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ==========================================================
+     SECTION: KHÓA HỌC NỔI BẬT
+     ========================================================== -->
+<section class="courses-section">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <span class="section-tag"><i class="bi bi-lightning-charge-fill me-1"></i> Mới được đăng tải</span>
+        <h3 class="section-heading mb-0">Khóa học mới</h3>
+      </div>
+      <a href="{% url 'courses' %}" class="link-view-all">
+        Xem tất cả khóa học <i class="bi bi-arrow-right"></i>
       </a>
     </div>
 
-    <div class="row g-3">
-      <!-- Khóa 1: Django Fullstack -->
-       {% for course in courses %}
+    <div class="row g-4">
+      {% for course in courses %}
       <div class="col-lg-3 col-md-6">
-        <div
-          class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden course-card"
-        >
-          <div class="position-relative">
-            <img
-              src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600"
-              class="card-img-top"
-              alt="Django Fullstack"
-            />
+        <div class="card h-100 course-card">
+          <!-- Thumbnail -->
+          <div class="course-thumbnail-box">
+            {% if course.thumbnail %}
+              <img
+              src="{{ course.thumbnail.url }}"
+              alt="{{ course.title }}"
+              class="course-thumbnail-image"
+              />
+              <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+            {% else %}
+              <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+            {% endif %}
+            <span class="course-badge-overlay">PTIT Course</span>
           </div>
-          <div class="card-body p-3 d-flex flex-column justify-content-between">
+
+          <!-- Nội dung Card -->
+          <div class="card-body d-flex flex-column justify-content-between">
             <div>
-              <h6 class="fw-bold card-title mb-2 text-truncate-2">
+              <h6 class="course-title" title="{{ course.title }}">
                 {{ course.title }}
               </h6>
-              <div
-                class="d-flex align-items-center gap-1 mb-2 text-muted small"
-              >
-                <i class="bi bi-person-circle"></i> {{ course.instructor.last_name }} {{ course.instructor.first_name }}
-              </div>
-              <div
-                class="d-flex align-items-center gap-2 small text-muted mb-3 fs-7"
-              >
+              <div class="course-instructor">
+                <i class="bi bi-person-circle"></i>
+                <span>
+                  {% if course.instructor %}
+                    {{ course.instructor.get_full_name|default:course.instructor.username }}
+                  {% else %}
+                    Giảng viên PTIT
+                  {% endif %}
+                </span>
               </div>
             </div>
-            <div
-              class="d-flex justify-content-between align-items-center pt-2 border-top"
-            >
-              <a href="{% url "detail-course" %}?id={{course.id}}" class="btn btn-primary btn-sm rounded-pill px-3"
-                >Xem chi tiết</a
-              >
+
+            <div class="course-card-footer">
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 0.725rem;">
+                <i class="bi bi-people-fill me-1"></i>{{ course.enrollment_count }} học viên
+              </span>
+              <a href="{% url 'detail-course' %}?id={{ course.id }}" class="btn-detail-course">
+                Xem chi tiết <i class="bi bi-chevron-right" style="font-size: 0.75rem;"></i>
+              </a>
             </div>
           </div>
         </div>
       </div>
-{% endfor %}
-<!-- SECTION: LÝ DO LỰA CHỌN EDUPRO -->
-<section class="py-5">
+      {% empty %}
+      <div class="col-12 text-center py-5">
+        <p class="text-muted">Hiện chưa có khóa học nào được đăng tải.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="popular-courses-section">
   <div class="container">
-    <div class="row align-items-center g-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <span class="section-tag"><i class="bi bi-graph-up-arrow me-1"></i> Theo lượt đăng ký</span>
+        <h2 class="section-heading mb-0">Khóa học được đăng ký nhiều nhất</h2>
+      </div>
+      <a href="{% url 'courses' %}?sort=popular" class="link-view-all">Xem danh mục <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-3">
+      {% for course in popular_courses %}
+        <div class="col-12 col-md-6 col-xl-3">
+          <a href="{% url 'detail-course' %}?id={{ course.id }}" class="popular-course-card">
+            <span class="popular-course-rank">{{ forloop.counter|stringformat:"02d" }}</span>
+            <span class="popular-course-copy">
+              <strong>{{ course.title }}</strong>
+              <small>{{ course.instructor.get_full_name|default:course.instructor.username }}</small>
+            </span>
+            <span class="popular-course-count"><i class="bi bi-people-fill"></i> {{ course.enrollment_count }}</span>
+          </a>
+        </div>
+      {% empty %}
+        <div class="col-12"><p class="text-muted mb-0">Chưa có khóa học công khai.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================
+     SECTION: LÝ DO LỰA CHỌN PTIT24 (BENTO CARDS)
+     ========================================================== -->
+<section class="why-us-section">
+  <div class="container">
+    <div class="row align-items-center g-5">
       <div class="col-lg-6">
-        <span class="badge bg-primary-subtle text-primary rounded-pill mb-2"
-          >Tại sao chọn EduPro?</span
-        >
-        <h3 class="fw-bold text-dark mb-4">
-          Lý do hàng triệu người lựa chọn EduPro
+        <span class="section-tag"><i class="bi bi-patch-check-fill me-1"></i> Giá trị vượt trội</span>
+        <h3 class="section-heading mb-4">
+          Công cụ hỗ trợ hành trình học tập
         </h3>
 
-        <div class="row g-4">
+        <div class="row g-3">
           <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3">
-              <div class="p-3 bg-primary text-white rounded-3">
-                <i class="bi bi-laptop fs-4"></i>
+            <div class="feature-bento-card">
+              <div class="feature-icon-box icon-box-blue">
+                <i class="bi bi-laptop"></i>
               </div>
               <div>
-                <h6 class="fw-bold mb-1">Học online linh hoạt</h6>
-                <small class="text-muted"
-                  >Học mọi lúc mọi nơi trên mọi thiết bị.</small
-                >
+                <h6>Học online linh hoạt</h6>
+                <p>Truy cập nội dung học trên giao diện tương thích với nhiều kích thước màn hình.</p>
               </div>
             </div>
           </div>
+
           <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3">
-              <div class="p-3 bg-primary text-white rounded-3">
-                <i class="bi bi-person-check fs-4"></i>
+            <div class="feature-bento-card">
+              <div class="feature-icon-box icon-box-indigo">
+                <i class="bi bi-person-check"></i>
               </div>
               <div>
-                <h6 class="fw-bold mb-1">Giảng viên chất lượng</h6>
-                <small class="text-muted"
-                  >Đội ngũ giảng viên giàu kinh nghiệm.</small
-                >
+                <h6>Giảng viên chất lượng</h6>
+                <p>Xem hồ sơ giảng viên và các khóa học họ đang phụ trách trước khi đăng ký.</p>
               </div>
             </div>
           </div>
+
           <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3">
-              <div class="p-3 bg-primary text-white rounded-3">
-                <i class="bi bi-award fs-4"></i>
+            <div class="feature-bento-card">
+              <div class="feature-icon-box icon-box-amber">
+                <i class="bi bi-bar-chart-line"></i>
               </div>
               <div>
-                <h6 class="fw-bold mb-1">Chứng chỉ uy tín</h6>
-                <small class="text-muted"
-                  >Cấp chứng chỉ sau khi hoàn thành khóa học.</small
-                >
+                <h6>Theo dõi tiến độ</h6>
+                <p>Xem phần trăm hoàn thành, bài đã học và chuỗi ngày học của bạn.</p>
               </div>
             </div>
           </div>
+
           <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3">
-              <div class="p-3 bg-primary text-white rounded-3">
-                <i class="bi bi-headset fs-4"></i>
+            <div class="feature-bento-card">
+              <div class="feature-icon-box icon-box-emerald">
+                <i class="bi bi-file-earmark-text"></i>
               </div>
               <div>
-                <h6 class="fw-bold mb-1">Hỗ trợ 24/7</h6>
-                <small class="text-muted"
-                  >Luôn đồng hành hỗ trợ học viên.</small
-                >
+                <h6>Nhiều dạng bài học</h6>
+                <p>Học qua video, bài đọc hoặc tài liệu được đính kèm theo bài.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-6 text-center">
-        <img
-          src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=700"
-          class="img-fluid rounded-4 shadow"
-          alt="Learning Experience"
-        />
+
+      <div class="col-lg-6">
+        <div class="home-learning-path">
+          <div class="home-learning-path-heading">
+            <span class="section-tag"><i class="bi bi-signpost-split me-1"></i> Bắt đầu trong 3 bước</span>
+            <h3 class="section-heading">Từ khám phá đến hoàn thành</h3>
+          </div>
+          <div class="home-learning-step">
+            <span>01</span><div><strong>Chọn khóa học</strong><p>Tìm theo tên khóa học, mô tả hoặc giảng viên.</p></div>
+          </div>
+          <div class="home-learning-step">
+            <span>02</span><div><strong>Đăng ký và học</strong><p>Mở nội dung khóa học và học theo thứ tự bài giảng.</p></div>
+          </div>
+          <div class="home-learning-step">
+            <span>03</span><div><strong>Theo dõi tiến độ</strong><p>Hồ sơ cá nhân lưu trạng thái học và các khóa đã hoàn thành.</p></div>
+          </div>
+          <a href="{% url 'courses' %}" class="btn-detail-course mt-3">Bắt đầu khám phá <i class="bi bi-arrow-right"></i></a>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const startButton = document.getElementById("startLearningBtn");
+
+    if (!welcomeScreen) return;
+
+    if (sessionStorage.getItem("welcomed") === "true") {
+        welcomeScreen.style.display = "none";
+        return;
+    }
+
+    if (startButton) {
+        startButton.addEventListener("click", function () {
+            welcomeScreen.classList.add("hide");
+            sessionStorage.setItem("welcomed", "true");
+        });
+    }
+});
+</script>
 {% endblock main-content %}

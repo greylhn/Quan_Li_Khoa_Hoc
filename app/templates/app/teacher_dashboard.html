@@ -1,0 +1,437 @@
+{% extends 'app/base_instructor.html' %}
+
+{% block title %}Trang chủ - PTIT24{% endblock %}
+
+{% block page_title %}Trang chủ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .teacher-dashboard {
+        --dashboard-border: rgba(148, 163, 184, 0.18);
+    }
+    .teacher-dashboard .welcome-banner {
+        background: linear-gradient(135deg, #111a2e, #0f172a);
+        border: 1px solid var(--dashboard-border);
+        border-radius: 16px;
+        padding: 28px 32px;
+    }
+    .teacher-dashboard .metric-card {
+        min-height: 155px;
+        padding: 24px !important;
+        border: 1px solid var(--dashboard-border) !important;
+        border-radius: 16px !important;
+        transition: transform .2s ease, border-color .2s ease;
+    }
+    .teacher-dashboard .metric-card:hover,
+    .teacher-dashboard .course-card-item:hover {
+        transform: translateY(-3px);
+        border-color: rgba(96, 165, 250, .45) !important;
+    }
+    .teacher-dashboard .metric-icon {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 48px;
+    }
+    .teacher-dashboard .metric-value {
+        font-size: 2.1rem;
+        line-height: 1.1;
+    }
+    .teacher-dashboard .dashboard-panel {
+        border: 1px solid var(--dashboard-border) !important;
+        border-radius: 16px !important;
+        overflow: hidden;
+    }
+    .teacher-dashboard .text-dark {
+        color: #e2e8f0 !important;
+    }
+    .teacher-dashboard .dashboard-panel-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--dashboard-border);
+    }
+    .teacher-dashboard .dashboard-panel-body {
+        padding: 22px 24px;
+    }
+    .teacher-dashboard .dashboard-panel-body.p-0 {
+        padding: 0;
+    }
+    .teacher-dashboard .course-card-item {
+        background: #111a2e;
+        border: 1px solid var(--dashboard-border);
+        border-radius: 12px;
+        padding: 16px;
+        transition: transform .2s ease, border-color .2s ease;
+    }
+    .teacher-dashboard .course-thumbnail {
+        width: 100%;
+        height: 145px;
+        object-fit: cover;
+    }
+    .teacher-dashboard .course-title {
+        font-size: 1rem;
+        line-height: 1.4;
+        min-height: 2.8em;
+    }
+    .teacher-dashboard .course-meta {
+        font-size: .875rem;
+    }
+    .teacher-dashboard .quick-btn {
+        background: #0f172a;
+        border: 1px solid var(--dashboard-border);
+        border-radius: 12px;
+        padding: 16px 8px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        color: #e2e8f0 !important;
+        transition: background .2s ease, border-color .2s ease;
+    }
+    .teacher-dashboard .quick-btn:hover {
+        background: #1e293b;
+        border-color: rgba(96, 165, 250, .45);
+    }
+    .teacher-dashboard .calendar-empty {
+        background: #111a2e;
+        border: 1px solid var(--dashboard-border);
+    }
+    .teacher-dashboard .calendar-table th,
+    .teacher-dashboard .calendar-table td {
+        font-size: .875rem;
+        text-align: center;
+        padding: 7px 0;
+        cursor: pointer;
+    }
+    .teacher-dashboard .calendar-day {
+        width: 34px;
+        height: 34px;
+        line-height: 34px;
+        margin: auto;
+        border-radius: 50%;
+        transition: background-color .2s ease;
+    }
+    .teacher-dashboard .calendar-day:hover {
+        background-color: rgba(148, 163, 184, .18);
+    }
+    .teacher-dashboard .calendar-day.selected {
+        background-color: #2563eb;
+        color: #ffffff;
+        font-weight: 700;
+    }
+    @media (max-width: 767px) {
+        .teacher-dashboard .welcome-banner { padding: 22px; }
+        .teacher-dashboard .metric-card { min-height: 130px; padding: 18px !important; }
+        .teacher-dashboard .dashboard-panel-header,
+        .teacher-dashboard .dashboard-panel-body { padding: 18px; }
+    }
+</style>
+{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid p-0 teacher-dashboard">
+    
+    <!-- BANNER CHÀO MỪNG -->
+    <div class="welcome-banner mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">Xin chào, {{ user.get_full_name|default:user.username }}! 👋</h4>
+            <p class="text-muted mb-0 small">Chúc bạn có một ngày làm việc hiệu quả!<br>Hãy tiếp tục tạo ra những bài giảng hữu ích cho học viên nhé.</p>
+        </div>
+        <div class="d-none d-lg-block text-end">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-laptop text-primary opacity-50" style="font-size: 40px;"></i>
+                <i class="bi bi-mortarboard-fill text-primary" style="font-size: 56px;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 THẺ KPI TỔNG QUAN -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <a href="{% url 'teacher_courses' %}" class="card metric-card h-100 text-decoration-none d-block">
+                <div class="d-flex align-items-center mb-1">
+                    <div class="metric-icon bg-primary-subtle rounded-3 text-primary me-3">
+                        <i class="bi bi-book fs-4"></i>
+                    </div>
+                    <span class="text-muted">Khóa học đang dạy</span>
+                </div>
+                <h3 class="metric-value fw-bold my-3 text-dark">{{ total_courses|default:0 }}</h3>
+                <span class="text-success small"><i class="bi bi-journal-check me-1"></i>Khóa học của bạn</span>
+            </a>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <a href="{% url 'teacher_course_list_for_students' %}" class="card metric-card h-100 text-decoration-none d-block">
+                <div class="d-flex align-items-center mb-1">
+                    <div class="metric-icon bg-success-subtle rounded-3 text-success me-3">
+                        <i class="bi bi-people fs-4"></i>
+                    </div>
+                    <span class="text-muted">Tổng số học viên</span>
+                </div>
+                <h3 class="metric-value fw-bold my-3 text-dark">{{ total_students|default:0 }}</h3>
+                <span class="text-success small"><i class="bi bi-person-check me-1"></i>Đã đăng ký khóa học</span>
+            </a>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <a href="{% url 'teacher_lessons' %}" class="card metric-card h-100 text-decoration-none d-block">
+                <div class="d-flex align-items-center mb-1">
+                    <div class="metric-icon bg-info-subtle rounded-3 text-info me-3">
+                        <i class="bi bi-play-btn fs-4"></i>
+                    </div>
+                    <span class="text-muted">Tổng số bài giảng</span>
+                </div>
+                <h3 class="metric-value fw-bold my-3 text-dark">{{ total_lessons|default:0 }}</h3>
+                <span class="text-success small"><i class="bi bi-camera-video me-1"></i>Nội dung đã tạo</span>
+            </a>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <a href="{% url 'teacher_analytics' %}" class="card metric-card h-100 text-decoration-none d-block">
+                <div class="d-flex align-items-center mb-1">
+                    <div class="metric-icon bg-warning-subtle rounded-3 text-warning me-3">
+                        <i class="bi bi-journal-check fs-4"></i>
+                    </div>
+                    <span class="text-muted">Tổng số chương</span>
+                </div>
+                <h3 class="metric-value fw-bold my-3 text-dark">{{ total_chapters|default:0 }}</h3>
+                <span class="text-success small"><i class="bi bi-collection me-1"></i>Cấu trúc khóa học</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- BỐ CỤC CHÍNH 2 CỘT CHUẨN BOOTSTRAP GRID -->
+    <div class="row g-4">
+        
+        <!-- CỘT TRÁI (8 Cột) -->
+        <div class="col-xl-8">
+            
+            <!-- Khóa học của tôi -->
+            <div class="card dashboard-panel mb-4">
+                <div class="dashboard-panel-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark">Khóa học của tôi</h5>
+                        <p class="text-muted mb-0">Tổng quan các khóa học bạn đang phụ trách</p>
+                    </div>
+                    <a href="{% url 'teacher_courses' %}" class="text-decoration-none small fw-semibold text-primary">Xem tất cả <i class="bi bi-chevron-right" style="font-size: 10px;"></i></a>
+                </div>
+
+                <div class="dashboard-panel-body">
+                    <div class="row g-4">
+                        {% for course in courses %}
+                        <div class="col-md-6">
+                            <div class="course-card-item h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="mb-2">
+                                        {% if course.thumbnail %}
+                                            <div class="course-image-frame rounded-3">
+                                                <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-thumbnail-image">
+                                                <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+                                            </div>
+                                        {% else %}
+                                            <div class="course-image-frame rounded-3">
+                                                <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <h6 class="course-title fw-bold text-dark mb-2" title="{{ course.title }}">{{ course.title }}</h6>
+                                    <div class="course-meta text-muted mb-3">
+                                        <div><i class="bi bi-people me-2"></i>{{ course.enrollment_count|default:0 }} học viên</div>
+                                        <div class="mt-1"><i class="bi bi-journals me-2"></i>{{ course.lesson_count|default:0 }} bài giảng</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                    {% if course.ished %}
+                                        <span class="badge bg-success-subtle rounded-pill px-3 py-2">Công khai</span>
+                                    {% else %}
+                                        <span class="badge bg-warning-subtle rounded-pill px-3 py-2">Riêng tư</span>
+                                    {% endif %}
+                                    <a href="{% url 'course_detail_instructor' course.id %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                        Quản lý <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center py-5 text-muted">
+                            <i class="bi bi-journal-x display-5 d-block mb-3"></i>
+                            <p class="mb-0">Chưa có khóa học nào trong cơ sở dữ liệu.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CỘT PHẢI (4 Cột) -->
+        <div class="col-xl-4">
+
+            <!-- Đăng ký gần đây -->
+            <div class="card dashboard-panel mb-4">
+                <div class="dashboard-panel-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark">Học viên đăng ký gần đây</h5>
+                        <p class="text-muted mb-0">Hoạt động mới nhất trong các khóa học của bạn</p>
+                    </div>
+                    <a href="{% url 'teacher_course_list_for_students' %}" class="text-decoration-none small fw-semibold text-primary">Danh sách <i class="bi bi-chevron-right"></i></a>
+                </div>
+                <div class="dashboard-panel-body p-0">
+                    {% for item in recent_enrollments %}
+                    <div class="d-flex align-items-center gap-3 p-3 border-bottom">
+                        <span class="metric-icon bg-success-subtle rounded-circle text-success">
+                            <i class="bi bi-person-plus fs-5"></i>
+                        </span>
+                        <div class="flex-grow-1 min-width-0">
+                            <div class="fw-semibold text-truncate">{{ item.student_name }}</div>
+                            <div class="text-muted small text-truncate">Đăng ký {{ item.course_title }}</div>
+                        </div>
+                        <time class="text-muted small text-nowrap">{{ item.date_str }}</time>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted py-5">Chưa có lượt đăng ký nào.</div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Lịch giảng dạy -->
+            <div class="card dashboard-panel mb-4">
+                <div class="dashboard-panel-header d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-dark">Lịch giảng dạy</h6>
+                    <span class="text-muted small" style="font-size: 11.5px;">
+                        <i class="bi bi-chevron-left" style="cursor: pointer;" onclick="changeMonth(-1)"></i> 
+                        <span id="current-month-year"></span>
+                        <i class="bi bi-chevron-right" style="cursor: pointer;" onclick="changeMonth(1)"></i>
+                    </span>
+                </div>
+                
+                <div class="dashboard-panel-body">
+                    <table class="table table-borderless calendar-table mb-2">
+                        <thead>
+                            <tr class="text-muted">
+                                <th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendar-body">
+                        </tbody>
+                    </table>
+
+                    <div class="border-top pt-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold text-dark">Lịch dạy trong ngày <span id="schedule-date-text" class="text-primary"></span></span>
+                        </div>
+                        <div id="schedule-content" class="d-flex flex-column gap-2">
+                            <div class="calendar-empty p-3 rounded-3 text-muted">
+                                Chưa có lịch dạy được thiết lập.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Truy cập nhanh -->
+            <div class="card dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <h6 class="fw-bold mb-0 text-dark">Truy cập nhanh</h6>
+                </div>
+                <div class="dashboard-panel-body">
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <a href="{% url 'teacher_courses' %}" class="quick-btn text-dark">
+                                <i class="bi bi-journal-plus text-primary fs-5 d-block mb-1"></i>
+                                <span style="font-size: 11px; font-weight: 600;">Khóa học</span>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="{% url 'teacher_course_list_for_students' %}" class="quick-btn text-dark">
+                                <i class="bi bi-people text-success fs-5 d-block mb-1"></i>
+                                <span style="font-size: 11px; font-weight: 600;">Học viên</span>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="{% url 'teacher_analytics' %}" class="quick-btn text-dark">
+                                <i class="bi bi-bar-chart text-info fs-5 d-block mb-1"></i>
+                                <span style="font-size: 11px; font-weight: 600;">Thống kê</span>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="{% url 'teacher_courses' %}" class="quick-btn text-dark">
+                                <i class="bi bi-book text-primary fs-5 d-block mb-1"></i>
+                                <span style="font-size: 11px; font-weight: 600;">Quản lý</span>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="{% url 'profile' %}" class="quick-btn text-dark">
+                                <i class="bi bi-gear text-secondary fs-5 d-block mb-1"></i>
+                                <span style="font-size: 11px; font-weight: 600;">Cài đặt</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    let today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+    let selectedDay = today.getDate();
+    const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+
+    function renderCalendar(month, year) {
+        document.getElementById("current-month-year").innerText = `${monthNames[month]}, ${year}`;
+        let firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        let tbody = document.getElementById("calendar-body");
+        tbody.innerHTML = "";
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+            let row = document.createElement("tr");
+            for (let j = 0; j < 7; j++) {
+                let cell = document.createElement("td");
+                if (i === 0 && j < firstDay) {
+                    cell.innerHTML = "";
+                } else if (date > daysInMonth) {
+                    break;
+                } else {
+                    let dayDiv = document.createElement("div");
+                    dayDiv.className = "calendar-day";
+                    dayDiv.innerText = date;
+                    if (date === selectedDay && month === currentMonth && year === currentYear) {
+                        dayDiv.classList.add("selected");
+                    }
+                    let d = date, m = month, y = year;
+                    dayDiv.onclick = function() {
+                        selectedDay = d;
+                        currentMonth = m;
+                        currentYear = y;
+                        document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('selected'));
+                        dayDiv.classList.add('selected');
+                        
+                        let formattedDate = `${d < 10 ? '0'+d : d}/${m+1 < 10 ? '0'+(m+1) : m+1}/${y}`;
+                        document.getElementById("schedule-date-text").innerText = formattedDate;
+                    };
+                    cell.appendChild(dayDiv);
+                    date++;
+                }
+                row.appendChild(cell);
+            }
+            tbody.appendChild(row);
+            if (date > daysInMonth) break;
+        }
+    }
+
+    function changeMonth(dir) {
+        currentMonth += dir;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar(currentMonth, currentYear);
+    }
+
+    const initialDateLabel = `${String(selectedDay).padStart(2, "0")}/${String(currentMonth + 1).padStart(2, "0")}/${currentYear}`;
+    document.getElementById("schedule-date-text").innerText = initialDateLabel;
+    renderCalendar(currentMonth, currentYear);
+</script>
+{% endblock %}

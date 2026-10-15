@@ -3,7 +3,7 @@
    ============================================================ */
 
 body {
-  background-color: #f4f6f9 !important;
+  background-color: #070b14 !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -15,16 +15,16 @@ body {
 
 /* SEARCH BOX NAVBAR */
 .search-box input {
-  background-color: #f1f3f5;
+  background-color: #111827;
   border: 1px solid transparent;
   width: 220px;
 }
 
 /* STYLES SIDEBAR */
 .sidebar-panel {
-  background-color: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
 }
 
 .sidebar-nav .nav-link {
@@ -33,27 +33,27 @@ body {
 }
 
 .sidebar-nav .nav-link:hover {
-  background-color: #f8f9fa;
+  background-color: rgba(255, 255, 255, 0.08);
   color: #0d6efd !important;
 }
 
 .sidebar-nav .active-category {
-  background-color: #f1f5f9;
-  color: #0f172a !important;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f8fafc !important;
 }
 
 .sidebar-nav .active-submenu {
-  background-color: #e0e7ff !important;
-  color: #1d4ed8 !important;
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  color: #93c5fd !important;
   font-weight: 600;
 }
 
 /*  CARD KHÓA HỌC */
 .ptit-course-card {
-  background: #ffffff !important;
+  background: #111a2e !important;
   border-radius: 16px !important;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
   overflow: hidden !important;
   height: 100% !important;
   display: flex !important;
@@ -63,13 +63,14 @@ body {
 
 .ptit-course-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35) !important;
 }
 
-/* CỐ ĐỊNH CHIỀU CAO THUMBNAIL */
+/* Hiển thị toàn bộ ảnh khóa học trong khung thống nhất, không cắt nội dung. */
 .ptit-course-card .card-thumb {
   width: 100% !important;
-  height: 150px !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
   overflow: hidden !important;
   background-color: #000000;
 }
@@ -77,7 +78,8 @@ body {
 .ptit-course-card .card-thumb img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
+  transform: none !important;
 }
 
 /* NỘI DUNG CHỮ TRONG CARD */
@@ -86,19 +88,19 @@ body {
   display: flex !important;
   flex-direction: column !important;
   flex-grow: 1 !important;
-  background-color: #ffffff;
+  background-color: #111a2e;
 }
 
 .ptit-course-card .course-name {
   font-weight: 700 !important;
   font-size: 1.05rem !important;
-  color: #1e293b !important;
+  color: #f8fafc !important;
   margin-bottom: 0.4rem !important;
 }
 
 .ptit-course-card .teacher-info {
   font-size: 0.825rem !important;
-  color: #64748b !important;
+  color: #94a3b8 !important;
   margin-bottom: 1rem !important;
   display: flex;
   align-items: center;
@@ -109,7 +111,7 @@ body {
   display: inline-block !important;
   border: 1px solid #0d6efd !important;
   color: #0d6efd !important;
-  background-color: #ffffff !important;
+  background-color: #111827 !important;
   border-radius: 50px !important;
   padding: 5px 18px !important;
   font-size: 0.8rem !important;
@@ -136,4 +138,112 @@ footer.ptit-footer a {
 
 footer.ptit-footer a:hover {
   color: #ffffff !important;
+}
+
+/* Keep the legacy instructor pages on the same dark palette as the dashboard. */
+body {
+  background: #070b14 !important;
+  color: #f8fafc;
+}
+
+.bg-light,
+.bg-white,
+.sidebar-panel,
+.ptit-course-card,
+.ptit-course-card .card-body-content,
+.btn-light {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.search-box input,
+.form-control,
+.form-select,
+.input-group-text {
+  background-color: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.text-dark,
+.ptit-course-card .course-name,
+.sidebar-panel h5,
+.sidebar-nav .nav-link {
+  color: #f8fafc !important;
+}
+
+.text-muted,
+.text-secondary,
+.ptit-course-card .teacher-info {
+  color: #94a3b8 !important;
+}
+
+.sidebar-nav .active-category,
+.sidebar-nav .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+.sidebar-nav .active-submenu {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  color: #93c5fd !important;
+}
+
+.ptit-course-card,
+.sidebar-panel {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
+}
+
+.btn-pill-action {
+  background-color: #111827 !important;
+  color: #93c5fd !important;
+}
+
+.btn-pill-action:hover {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-primary-subtle,
+.badge.bg-primary.bg-opacity-10 {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  border: 1px solid rgba(96, 165, 250, 0.42);
+  color: #bfdbfe !important;
+}
+
+.badge.bg-success-subtle,
+.badge.bg-success.bg-opacity-10 {
+  background-color: rgba(16, 185, 129, 0.18) !important;
+  border: 1px solid rgba(52, 211, 153, 0.42);
+  color: #a7f3d0 !important;
+}
+
+.badge.bg-info-subtle,
+.badge.bg-info.bg-opacity-10 {
+  background-color: rgba(6, 182, 212, 0.18) !important;
+  border: 1px solid rgba(34, 211, 238, 0.42);
+  color: #a5f3fc !important;
+}
+
+.badge.bg-warning-subtle,
+.badge.bg-warning.bg-opacity-10 {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  border: 1px solid rgba(251, 191, 36, 0.42);
+  color: #fde68a !important;
+}
+
+.badge.bg-danger-subtle,
+.badge.bg-danger.bg-opacity-10 {
+  background-color: rgba(239, 68, 68, 0.18) !important;
+  border: 1px solid rgba(248, 113, 113, 0.42);
+  color: #fecaca !important;
+}
+
+.badge.bg-secondary-subtle,
+.badge.bg-secondary.bg-opacity-10 {
+  background-color: rgba(148, 163, 184, 0.18) !important;
+  border: 1px solid rgba(203, 213, 225, 0.32);
+  color: #e2e8f0 !important;
 }

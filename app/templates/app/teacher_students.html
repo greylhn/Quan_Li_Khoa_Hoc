@@ -1,0 +1,83 @@
+{% extends 'app/base_instructor.html' %}
+{% load static %}
+
+{% block title %}Quản lý học viên - PTIT24{% endblock %}
+{% block page_title %}Danh sách học viên đang theo học{% endblock %}
+
+{% block extra_css %}
+<style>
+    .teacher-students-shell {
+        background: transparent;
+    }
+    .teacher-students-shell .card,
+    .teacher-students-shell .table,
+    .teacher-students-shell .badge,
+    .teacher-students-shell .text-muted,
+    .teacher-students-shell .text-dark,
+    .teacher-students-shell h5,
+    .teacher-students-shell td,
+    .teacher-students-shell th {
+        color: #f8fafc !important;
+    }
+    .teacher-students-shell .card {
+        background: linear-gradient(180deg, rgba(10, 16, 28, 0.98), rgba(15, 23, 42, 0.96)) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    }
+    .teacher-students-shell .table thead th {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border-color: rgba(148, 163, 184, 0.2) !important;
+        color: #cbd5e1 !important;
+    }
+    .teacher-students-shell .table td {
+        border-color: rgba(148, 163, 184, 0.2) !important;
+        background: transparent !important;
+    }
+    .teacher-students-shell .table tbody tr:hover {
+        background: rgba(148, 163, 184, 0.04) !important;
+    }
+</style>
+{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid px-0 teacher-students-shell">
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <h5 class="fw-bold text-dark mb-4"><i class="bi bi-people-fill text-primary me-2"></i>Tiến độ học tập của học viên</h5>
+        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-3 rounded-start">Học viên</th>
+                        <th class="py-3">Email</th>
+                        <th class="py-3">Khóa học đăng ký</th>
+                        <th class="py-3">Ngày tham gia</th>
+                        <th class="py-3 rounded-end text-center">Trạng thái / Tiến độ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in enrollments %}
+                    <tr>
+                        <td class="fw-semibold text-dark">
+                            <i class="bi bi-person-circle text-secondary me-2"></i>{{ item.student.last_name }} {{ item.student.first_name }}
+                        </td>
+                        <td class="text-muted">{{ item.student.email }}</td>
+                        <td><span class="badge bg-primary-subtle text-primary">{{ item.course.title }}</span></td>
+                        <td class="text-muted small">{{ item.created_at|date:"d/m/Y H:i" }}</td>
+                        <td class="text-center">
+                            <!-- Bạn có thể tính toán phần trăm hoàn thành dựa trên số bài học đã học -->
+                            <span class="badge bg-success-subtle text-success px-3 py-2">Đang học</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted fst-italic">
+                            Chưa có học viên nào đăng ký khóa học của bạn.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'app/base_instructor.html' %}
+{% load static %}
+
+{% block title %}Quản lý nội dung - {{ course.title }}{% endblock %}
+
+{% block page_title %}Quản lý nội dung khóa học{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid px-0">
+
+    <!-- Tiêu đề khóa học & Nút quay lại -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
+        <div>
+            <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-1 rounded-pill fw-semibold">Khóa học đang chỉnh sửa</span>
+            <h3 class="fw-bold text-dark mb-1">{{ course.title }}</h3>
+            <p class="text-muted small mb-0">Thêm mới hoặc xóa các chương học và bài giảng bên trong khóa học này.</p>
+        </div>
+        <a href="{% url 'teacher_courses' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <!-- Thông báo lỗi / thành công (nếu có từ Django messages) -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Khung form Thêm chương mới -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-folder-plus text-primary me-2"></i>Thêm chương học mới</h5>
+        <form method="POST" action="{% url 'add_chapter' course.id %}" class="row g-3 align-items-center">
+            {% csrf_token %}
+            <div class="col-md-9">
+                <input type="text" name="title" class="form-control rounded-3 py-2 shadow-none" placeholder="Nhập tên chương (Ví dụ: Chương 1: Tổng quan về lập trình)..." required>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm chương
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Danh sách các Chương và Bài học bên trong -->
+    <div class="chapters-container">
+        {% for chapter in course.chapters.all %}
+        <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+            <!-- Tiêu đề của Chương -->
+            <div class="card-header bg-light d-flex justify-content-between align-items-center py-3 px-4 border-bottom">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="bi bi-journal-richtext text-primary me-2"></i>Chương {{ forloop.counter }}: {{ chapter.title }}
+                </h5>
+                <div>
+                    <!-- Nút xóa chương -->
+                    <a href="{% url 'delete_chapter' chapter.id %}" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1 fw-semibold" onclick="return confirm('Cảnh báo: Xóa chương này sẽ đồng thời xóa toàn bộ bài học bên trong. Bạn có chắc chắn muốn xóa?');">
+                        <i class="bi bi-trash me-1"></i> Xóa chương
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-body p-4 bg-white">
+                <!-- Danh sách bài học trong chương -->
+                <div class="mb-3">
+                    <h6 class="text-uppercase text-muted fw-semibold small mb-2" style="font-size: 11px; letter-spacing: 0.5px;">Danh sách bài học:</h6>
+                    <ul class="list-group list-group-flush rounded-3 border">
+                        {% for lesson in chapter.lessons.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-3">
+                            <div>
+                                <span class="text-secondary fw-medium me-3">
+                                    <i class="bi bi-play-circle-fill text-success me-2"></i>Bài {{ forloop.counter }}: {{ lesson.title }}
+                                </span>
+                                {% if lesson.video_url %}
+                                    <a href="{{ lesson.video_url }}" target="_blank" class="badge bg-info-subtle text-info text-decoration-none">
+                                        <i class="bi bi-link-45deg"></i> Xem video
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <!-- Nút xóa bài học -->
+                            <a href="{% url 'delete_lesson' lesson.id %}" class="text-danger text-decoration-none small fw-semibold d-flex align-items-center gap-1" onclick="return confirm('Bạn có chắc muốn xóa bài học này?');">
+                                <i class="bi bi-x-circle-fill fs-5"></i> Xóa
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted small fst-italic py-3 text-center bg-light">
+                            Chưa có bài học nào trong chương này. Hãy thêm bài học ở khung bên dưới.
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Form thêm bài học nhanh vào chương này (Có thêm ô nhập Link Video) -->
+                <form method="POST" enctype="multipart/form-data" action="{% url 'add_lesson' chapter.id %}" class="row g-2 bg-light p-3 rounded-3 align-items-center mt-3 border">
+                    {% csrf_token %}
+                    <!-- Ô nhập tên bài học -->
+                    <div class="col-md-4">
+                        <input type="text" name="title" class="form-control form-control-sm rounded-2 shadow-none py-2" placeholder="Nhập tên bài học mới..." required>
+                    </div>
+                    <!-- Ô nhập Link Video -->
+                    <div class="col-md-4">
+                        <input type="url" name="video_url" class="form-control form-control-sm rounded-2 shadow-none py-2" placeholder="Dán link video (YouTube, Drive...)...">
+                    </div>
+                    <div class="col-md-4">
+                        <select name="status" class="form-select form-select-sm rounded-2 py-2" aria-label="Quyền hiển thị bài giảng">
+                            <option value="active">Công khai với học viên</option>
+                            <option value="inactive">Riêng tư — chỉ giảng viên quản lý</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold mb-1" for="lesson-content-{{ chapter.id }}">Nội dung bài giảng</label>
+                        <textarea id="lesson-content-{{ chapter.id }}" name="content" rows="4" class="form-control form-control-sm rounded-2 shadow-none" placeholder="Nhập nội dung bài giảng..."></textarea>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="file" name="attachment" class="form-control form-control-sm rounded-2 py-2" accept=".pdf,.doc,.docx,.ppt,.pptx" aria-label="Tài liệu bài giảng">
+                        <small class="form-text text-muted">Có thể tải PDF, Word hoặc PowerPoint.</small>
+                    </div>
+                    <!-- Nút Thêm bài học -->
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-success btn-sm w-100 rounded-2 py-2 fw-semibold shadow-sm">
+                            <i class="bi bi-plus-circle me-1"></i> Thêm bài học
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Trường hợp chưa có chương nào -->
+        <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
+            <i class="bi bi-journal-x fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="fw-bold text-secondary">Khóa học này chưa có chương nào</h5>
+            <p class="text-muted small mb-0">Hãy sử dụng khung phía trên để bắt đầu thêm chương đầu tiên cho khóa học.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

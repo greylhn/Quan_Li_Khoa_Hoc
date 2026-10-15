@@ -1,0 +1,83 @@
+/* ==========================================================
+   PTIT24 - MIDNIGHT TECH DARK THEME (LEARNING CSS)
+   ========================================================== */
+.learning-page-container {
+  background-color: #070b14 !important;
+  min-height: 100vh;
+  color: #f8fafc;
+}
+
+.learning-card {
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.learning-sidebar {
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  overflow: hidden;
+}
+
+.learning-sidebar .card-header {
+  background-color: #111a2e !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff;
+}
+
+/* Accordion dark mode */
+.learning-sidebar .accordion-item {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.learning-sidebar .accordion-button {
+  background-color: #111a2e !important;
+  color: #f1f5f9 !important;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+
+.learning-sidebar .accordion-button::after {
+  filter: invert(1);
+}
+
+.learning-sidebar .accordion-button:not(.collapsed) {
+  background-color: #16223b !important;
+  color: #60a5fa !important;
+}
+
+/* Lesson item */
+.learning-sidebar .list-group-item {
+  background-color: #0f172a !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.2s ease;
+}
+
+.learning-sidebar .list-group-item:hover {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+.learning-sidebar .list-group-item.active {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  border-left: 3px solid #3b82f6 !important;
+  color: #60a5fa !important;
+  font-weight: 600 !important;
+}
+
+.learning-sidebar .list-group-item.text-muted {
+  color: #64748b !important;
+}
+
+/* Alert boxes in learning */
+.learning-alert-box {
+  background-color: rgba(59, 130, 246, 0.12) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  color: #93c5fd !important;
+  border-radius: 14px;
+}
+

@@ -1,0 +1,720 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Giảng viên - PTIT24{% endblock title %}</title>
+
+    <!-- Google Font Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-bg:           #070b14;
+            --dark-surface:      #0f172a;
+            --dark-card:         #111a2e;
+            --dark-border:       rgba(255,255,255,0.08);
+            --dark-border-hover: rgba(96,165,250,0.4);
+            --dark-text-main:    #f8fafc;
+            --dark-text-muted:   #94a3b8;
+            --dark-primary:      #3b82f6;
+            --sidebar-w:         260px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text-main);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===================== SIDEBAR ===================== */
+        .instructor-sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--dark-surface);
+            border-right: 1px solid var(--dark-border);
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: transform 0.25s ease;
+        }
+
+        /* LOGO */
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid var(--dark-border);
+            text-decoration: none;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg,#2563eb,#3b82f6);
+            box-shadow: 0 4px 14px rgba(37,99,235,0.45);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo-text .logo-name {
+            font-size: 17px; font-weight: 800;
+            background: linear-gradient(135deg,#fff 40%,#93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .sidebar-logo-text .logo-sub {
+            font-size: 10px; font-weight: 700;
+            color: #64748b;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        /* MENU */
+        .sidebar-nav {
+            padding: 18px 12px;
+            flex: 1;
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            color: #475569;
+            padding: 0 10px;
+            margin: 14px 0 6px;
+        }
+
+        .nav-section-label:first-child { margin-top: 0; }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: var(--dark-text-muted);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 2px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .sidebar-link i { font-size: 17px; width: 20px; text-align: center; flex-shrink: 0; }
+
+        .sidebar-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.06);
+        }
+
+        .sidebar-link.active {
+            color: #fff;
+            background: linear-gradient(135deg,#2563eb,#3b82f6);
+            box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--dark-border);
+            margin: 14px 8px;
+        }
+
+        /* SIDEBAR USER */
+        .sidebar-user {
+            padding: 14px 12px;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .sidebar-user-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+        }
+
+        .sidebar-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg,#2563eb,#3b82f6);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px;
+            flex-shrink: 0;
+        }
+        .sidebar-avatar img,
+        .topbar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-user-name  { font-size: 13px; font-weight: 600; color: #f1f5f9; line-height: 1.2; }
+        .sidebar-user-role  { font-size: 11px; color: #64748b; }
+
+        /* ===================== MAIN ===================== */
+        .instructor-main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOPBAR */
+        .instructor-topbar {
+            height: 68px;
+            background: rgba(15,23,42,0.95);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--dark-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .topbar-page-title { font-size: 17px; font-weight: 700; color: #f1f5f9; }
+        .topbar-breadcrumb { font-size: 12px; color: var(--dark-text-muted); margin-top: 2px; }
+
+        .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+        .topbar-icon-btn {
+            width: 38px; height: 38px;
+            border: 1px solid var(--dark-border);
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--dark-text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .topbar-icon-btn:hover {
+            background: rgba(255,255,255,0.09);
+            color: #fff;
+            border-color: rgba(255,255,255,0.18);
+        }
+
+        /* DROPDOWN dark */
+        .dark-dropdown-menu {
+            background: var(--dark-surface) !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 18px 40px -5px rgba(0,0,0,0.8) !important;
+            padding: 6px !important;
+            min-width: 180px;
+        }
+
+        .dark-dropdown-menu .dropdown-item {
+            color: #cbd5e1 !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+            padding: 8px 12px !important;
+            transition: all 0.2s ease;
+        }
+
+        .dark-dropdown-menu .dropdown-item:hover {
+            background: #1e293b !important;
+            color: #fff !important;
+        }
+
+        .dark-dropdown-menu .dropdown-divider {
+            border-color: rgba(255,255,255,0.08) !important;
+        }
+
+        /* topbar user btn */
+        .topbar-user-btn {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--dark-border);
+            border-radius: 50px;
+            padding: 5px 14px 5px 6px;
+            color: #f1f5f9;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .topbar-user-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); }
+
+        .topbar-avatar {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg,#2563eb,#3b82f6);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 12px; color: #fff;
+        }
+
+        /* CONTENT */
+        .instructor-content {
+            flex: 1;
+            padding: 28px;
+        }
+
+        /* GLOBAL DARK BOOTSTRAP OVERRIDES */
+        .bg-light, .bg-white, .table-light, .btn-light {
+            background: var(--dark-surface) !important;
+            color: var(--dark-text-main) !important;
+            border-color: var(--dark-border) !important;
+        }
+
+        .card {
+            background: var(--dark-card) !important;
+            border: 1px solid var(--dark-border) !important;
+            color: var(--dark-text-main) !important;
+            border-radius: 16px !important;
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        .card:hover { border-color: var(--dark-border-hover) !important; }
+
+        .card-header, .card-footer {
+            background: rgba(255,255,255,0.03) !important;
+            border-color: var(--dark-border) !important;
+            color: var(--dark-text-main) !important;
+        }
+
+        .text-muted, .text-secondary { color: var(--dark-text-muted) !important; }
+        .text-dark { color: var(--dark-text-main) !important; }
+        .bg-primary-subtle { background: rgba(59,130,246,0.16) !important; color: #93c5fd !important; }
+        .bg-success-subtle { background: rgba(16,185,129,0.16) !important; color: #6ee7b7 !important; }
+        .bg-info-subtle { background: rgba(6,182,212,0.16) !important; color: #67e8f9 !important; }
+        .bg-warning-subtle { background: rgba(245,158,11,0.16) !important; color: #fcd34d !important; }
+        .bg-danger-subtle { background: rgba(239,68,68,0.16) !important; color: #fca5a5 !important; }
+        .bg-secondary-subtle { background: rgba(148,163,184,0.16) !important; color: #cbd5e1 !important; }
+
+        .badge.bg-primary-subtle,
+        .badge.bg-primary.bg-opacity-10 {
+            background: rgba(59,130,246,0.18) !important;
+            border: 1px solid rgba(96,165,250,0.42);
+            color: #bfdbfe !important;
+        }
+        .badge.bg-success-subtle,
+        .badge.bg-success.bg-opacity-10 {
+            background: rgba(16,185,129,0.18) !important;
+            border: 1px solid rgba(52,211,153,0.42);
+            color: #a7f3d0 !important;
+        }
+        .badge.bg-info-subtle,
+        .badge.bg-info.bg-opacity-10 {
+            background: rgba(6,182,212,0.18) !important;
+            border: 1px solid rgba(34,211,238,0.42);
+            color: #a5f3fc !important;
+        }
+        .badge.bg-warning-subtle,
+        .badge.bg-warning.bg-opacity-10 {
+            background: rgba(245,158,11,0.18) !important;
+            border: 1px solid rgba(251,191,36,0.42);
+            color: #fde68a !important;
+        }
+        .badge.bg-danger-subtle,
+        .badge.bg-danger.bg-opacity-10 {
+            background: rgba(239,68,68,0.18) !important;
+            border: 1px solid rgba(248,113,113,0.42);
+            color: #fecaca !important;
+        }
+        .badge.bg-secondary-subtle,
+        .badge.bg-secondary.bg-opacity-10 {
+            background: rgba(148,163,184,0.18) !important;
+            border: 1px solid rgba(203,213,225,0.32);
+            color: #e2e8f0 !important;
+        }
+        .badge { font-weight: 700; }
+
+        .table {
+            --bs-table-color: var(--dark-text-main);
+            --bs-table-bg: transparent;
+            --bs-table-border-color: var(--dark-border);
+            --bs-table-striped-bg: rgba(255,255,255,0.025);
+            --bs-table-hover-bg: rgba(255,255,255,0.04);
+            color: var(--dark-text-main) !important;
+        }
+        .table th { color: var(--dark-text-muted) !important; border-color: var(--dark-border) !important; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .table td { border-color: var(--dark-border) !important; }
+        .table thead.table-light th,
+        .table thead.table-light td {
+            background: var(--dark-surface) !important;
+            color: var(--dark-text-muted) !important;
+        }
+        .table-hover tbody tr:hover { background: rgba(255,255,255,0.04) !important; }
+
+        .form-control, .form-select, .input-group-text {
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+            color: #fff !important;
+            border-radius: 10px !important;
+        }
+
+        .form-control:focus, .form-select:focus, .input-group-text:focus {
+            background: #162032 !important;
+            border-color: #3b82f6 !important;
+            color: #fff !important;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.25) !important;
+        }
+
+        .form-control::placeholder, .input-group-text { color: #94a3b8 !important; }
+        .form-select option { background: var(--dark-surface); color: var(--dark-text-main); }
+
+        .list-group-item {
+            background: var(--dark-card) !important;
+            color: var(--dark-text-main) !important;
+            border-color: var(--dark-border) !important;
+        }
+        .dropdown-menu, .modal-content, .offcanvas {
+            background: var(--dark-surface) !important;
+            color: var(--dark-text-main) !important;
+            border-color: var(--dark-border) !important;
+        }
+        .dropdown-item { color: var(--dark-text-main); }
+        .dropdown-item:hover, .dropdown-item:focus {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        .btn-light:hover { background: #1e293b !important; color: #fff !important; }
+        .form-check-input { background-color: #111827; border-color: #475569; }
+
+        .btn-primary {
+            background: linear-gradient(135deg,#2563eb,#3b82f6) !important;
+            border: none !important;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.35) !important;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg,#1d4ed8,#2563eb) !important;
+            box-shadow: 0 6px 18px rgba(59,130,246,0.5) !important;
+        }
+
+        .btn-outline-primary {
+            border-color: rgba(59,130,246,0.5) !important;
+            color: #60a5fa !important;
+        }
+
+        .btn-outline-primary:hover { background: #2563eb !important; color: #fff !important; }
+
+        .btn-outline-secondary {
+            border-color: rgba(255,255,255,0.15) !important;
+            color: #cbd5e1 !important;
+        }
+
+        .btn-outline-secondary:hover {
+            background: rgba(255,255,255,0.1) !important;
+            color: #fff !important;
+        }
+
+        .badge { font-weight: 600; }
+
+        .progress { background: #1e293b !important; border-radius: 9999px !important; }
+        .progress-bar { background: linear-gradient(90deg,#2563eb,#3b82f6) !important; }
+
+        .alert {
+            border-radius: 12px !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+        }
+
+        .alert-success { background: rgba(16,185,129,0.12) !important; color: #6ee7b7 !important; }
+        .alert-danger  { background: rgba(239,68,68,0.12)  !important; color: #fca5a5 !important; }
+        .alert-info    { background: rgba(59,130,246,0.12) !important; color: #93c5fd !important; }
+        .alert-warning { background: rgba(245,158,11,0.12) !important; color: #fcd34d !important; }
+
+        main.instructor-main .instructor-content .card {
+            background: linear-gradient(180deg, rgba(10,16,28,0.98), rgba(15,23,42,0.96)) !important;
+            border: 1px solid var(--dark-border) !important;
+            color: var(--dark-text-main) !important;
+        }
+
+        main.instructor-main .instructor-content .bg-light,
+        main.instructor-main .instructor-content .bg-white,
+        main.instructor-main .instructor-content .table-light,
+        main.instructor-main .instructor-content .btn-light,
+        main.instructor-main .instructor-content .list-group-item {
+            background: var(--dark-surface) !important;
+            border-color: var(--dark-border) !important;
+            color: var(--dark-text-main) !important;
+        }
+
+        main.instructor-main .instructor-content .text-dark {
+            color: var(--dark-text-main) !important;
+        }
+
+        main.instructor-main .instructor-content .text-muted,
+        main.instructor-main .instructor-content .text-secondary {
+            color: var(--dark-text-muted) !important;
+        }
+
+        main.instructor-main .instructor-content .text-primary { color: #93c5fd !important; }
+        main.instructor-main .instructor-content .text-success { color: #6ee7b7 !important; }
+        main.instructor-main .instructor-content .text-info { color: #67e8f9 !important; }
+        main.instructor-main .instructor-content .text-warning { color: #fcd34d !important; }
+        main.instructor-main .instructor-content .text-danger { color: #fca5a5 !important; }
+
+        main.instructor-main .instructor-content .table thead.table-light th,
+        main.instructor-main .instructor-content .table thead.table-light td {
+            background: var(--dark-surface) !important;
+            color: var(--dark-text-muted) !important;
+        }
+
+        main.instructor-main .instructor-content .table tbody td {
+            background: transparent !important;
+            color: var(--dark-text-main);
+        }
+
+        main.instructor-main .instructor-content .welcome-banner {
+            background: linear-gradient(135deg, #111a2e, #0f172a) !important;
+            color: var(--dark-text-main) !important;
+            border: 1px solid var(--dark-border);
+        }
+
+        main.instructor-main .instructor-content .course-card-item,
+        main.instructor-main .instructor-content .quick-btn,
+        main.instructor-main .instructor-content .donut-center {
+            background: var(--dark-card) !important;
+            color: var(--dark-text-main) !important;
+            border-color: var(--dark-border) !important;
+        }
+
+        main.instructor-main .instructor-content .course-card-item .course-name {
+            color: var(--dark-text-main) !important;
+        }
+
+        main.instructor-main .instructor-content .course-card-item .teacher-info {
+            color: var(--dark-text-muted) !important;
+        }
+
+        main.instructor-main .instructor-content .btn-outline-warning {
+            color: #fbbf24 !important;
+        }
+
+        main.instructor-main .instructor-content .badge.text-primary { color: #93c5fd !important; }
+        main.instructor-main .instructor-content .badge.text-success { color: #6ee7b7 !important; }
+        main.instructor-main .instructor-content .badge.text-info { color: #67e8f9 !important; }
+        main.instructor-main .instructor-content .badge.text-warning { color: #fcd34d !important; }
+        main.instructor-main .instructor-content .badge.text-secondary { color: #cbd5e1 !important; }
+
+        main.instructor-main .instructor-content .dropdown-menu,
+        main.instructor-main .instructor-content .modal-content {
+            background: var(--dark-surface) !important;
+            color: var(--dark-text-main) !important;
+            border-color: var(--dark-border) !important;
+        }
+
+        .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+
+        /* MOBILE */
+        @media (max-width: 991px) {
+            .instructor-sidebar { transform: translateX(-100%); }
+            .instructor-sidebar.show { transform: translateX(0); }
+            .instructor-main { margin-left: 0; }
+            .instructor-topbar { padding: 0 18px; }
+            .instructor-content { padding: 20px 16px; }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'app/css/course-images.css' %}">
+</head>
+
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="instructor-sidebar" id="instructorSidebar">
+
+    <!-- LOGO -->
+    <a href="{% url 'teacher_dashboard' %}" class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div class="sidebar-logo-text">
+            <div class="logo-name">PTIT24</div>
+            <div class="logo-sub">Giảng viên</div>
+        </div>
+    </a>
+
+    <!-- MENU -->
+    <nav class="sidebar-nav">
+
+        <div class="nav-section-label">Tổng quan</div>
+
+        <a href="{% url 'teacher_dashboard' %}"
+           class="sidebar-link {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Trang chủ</span>
+        </a>
+
+        <div class="nav-section-label">Quản lý</div>
+
+        <a href="{% url 'teacher_courses' %}"
+           class="sidebar-link {% if request.resolver_match.url_name == 'teacher_courses' or request.resolver_match.url_name == 'create_course' or request.resolver_match.url_name == 'edit_course' %}active{% endif %}">
+            <i class="bi bi-journal-bookmark-fill"></i>
+            <span>Khóa học</span>
+        </a>
+
+        <a href="{% url 'teacher_lessons' %}"
+           class="sidebar-link {% if request.resolver_match.url_name == 'teacher_lessons' %}active{% endif %}">
+            <i class="bi bi-play-circle-fill"></i>
+            <span>Bài giảng</span>
+        </a>
+
+        <a href="{% url 'teacher_course_list_for_students' %}"
+           class="sidebar-link {% if request.resolver_match.url_name == 'teacher_course_list_for_students' or request.resolver_match.url_name == 'course_students_detail' %}active{% endif %}">
+            <i class="bi bi-people-fill"></i>
+            <span>Học viên</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="nav-section-label">Phân tích</div>
+
+        <a href="{% url 'teacher_analytics' %}"
+           class="sidebar-link {% if request.resolver_match.url_name == 'teacher_analytics' %}active{% endif %}">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Thống kê</span>
+        </a>
+
+        <a href="{% url 'profile' %}"
+           class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+            <i class="bi bi-person-circle"></i>
+            <span>Hồ sơ</span>
+        </a>
+
+    </nav>
+
+    <!-- USER INFO -->
+    <div class="sidebar-user">
+        <div class="sidebar-user-box">
+            <div class="sidebar-avatar">
+                {% if user.avatar and user.avatar.name %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.get_full_name|default:user.username }}">
+                {% else %}
+                    {{ user.get_full_name|default:user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+            <div class="flex-grow-1 overflow-hidden">
+                <div class="sidebar-user-name text-truncate">{{ user.get_full_name|default:user.username }}</div>
+                <div class="sidebar-user-role">Giảng viên</div>
+            </div>
+            <form action="{% url 'logout' %}" method="post" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="border-0 bg-transparent text-secondary" title="Đăng xuất" style="font-size:16px; cursor:pointer;">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+</aside>
+
+
+<!-- ===== MAIN ===== -->
+<main class="instructor-main">
+
+    <!-- TOPBAR -->
+    <header class="instructor-topbar">
+
+        <div class="d-flex align-items-center gap-3">
+            <!-- Mobile toggle -->
+            <button class="topbar-icon-btn d-lg-none border-0" onclick="toggleInstructorSidebar()" style="background:transparent;">
+                <i class="bi bi-list fs-5"></i>
+            </button>
+
+            <div>
+                <div class="topbar-page-title">{% block page_title %}Trang chủ{% endblock page_title %}</div>
+                <div class="topbar-breadcrumb">PTIT24 <span class="mx-1 opacity-50">/</span> Giảng viên</div>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="topbar-actions">
+
+            <!-- View website -->
+            <a href="{% url 'home' %}" class="topbar-icon-btn d-none d-md-flex" title="Xem website">
+                <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+
+            <!-- User link -->
+            <a href="{% url 'profile' %}" class="topbar-user-btn text-decoration-none">
+                <div class="topbar-avatar">
+                    {% if user.avatar and user.avatar.name %}
+                        <img src="{{ user.avatar.url }}" alt="">
+                    {% else %}
+                        {{ user.get_full_name|default:user.username|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <span class="d-none d-sm-inline">{{ user.get_full_name|default:user.username }}</span>
+            </a>
+
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="instructor-content">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block instructor_content %}{% endblock instructor_content %}
+
+    </div>
+
+</main>
+
+
+<script>
+function toggleInstructorSidebar() {
+    document.getElementById('instructorSidebar').classList.toggle('show');
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block extra_js %}{% endblock %}
+
+<script src="{% static 'app/js/course-images.js' %}" defer></script>
+</body>
+</html>

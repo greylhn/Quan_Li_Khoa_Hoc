@@ -43,7 +43,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="{% url "add_course" %}" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
+                  <a href="{% url 'add_course' %}" class="nav-link text-secondary d-flex align-items-center gap-2 rounded-3 py-2 px-3">
                     <i class="bi bi-plus-circle"></i> Thêm khóa học mới
                   </a>
                 </li>
@@ -88,7 +88,7 @@
           <p class="text-muted small mb-0">Quản lý các khóa học và cập nhật nội dung bài giảng cho học viên</p>
         </div>
         <div class="d-flex align-items-center gap-3">
-          <a href="#" class="btn btn-primary rounded-pill btn-sm px-3 py-2 d-flex align-items-center gap-1">
+          <a href="{% url 'add_course' %}" class="btn btn-primary rounded-pill btn-sm px-3 py-2 d-flex align-items-center gap-1">
             <i class="bi bi-plus-lg"></i> Tạo khóa học mới
           </a>
           <select class="form-select form-select-sm rounded-3 shadow-none border-light-subtle py-2" style="width: auto;">
@@ -103,21 +103,30 @@
       <div class="row g-4">
         {% for course in courses %}
           <div class="col-12 col-md-6 col-xl-4">
-            <div class="ptit-course-card">
-              <div class="card-thumb">
+            <div class="ptit-course-card d-flex flex-column h-100 bg-white border-0 shadow-sm rounded-4 overflow-hidden p-3">
+              <div class="card-thumb mb-3">
                 {% if course.thumbnail and course.thumbnail.name %}
-                  <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}">
+                  <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-thumbnail-image rounded-3">
+                  <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
                 {% else %}
-                  <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" alt="{{ course.title }}">
+                  <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
                 {% endif %}
               </div>
-              <div class="card-body-content">
-                <h6 class="course-name">{{ course.title }}</h6>
-                <p class="teacher-info">
-                  <i class="bi bi-person-circle me-1"></i>Giảng viên: {{ course.instructor.get_full_name|default:request.user.username }}
+              <div class="card-body-content d-flex flex-column flex-grow-1">
+                <h6 class="course-name fw-bold text-dark text-truncate">{{ course.title }}</h6>
+                <p class="teacher-info text-muted small mb-3">
+                  <i class="bi bi-person-circle me-1"></i>Giảng viên: {{ course.instructor.get_full_name|default:course.instructor.username }}
                 </p>
-                <div class="mt-auto pt-2">
-                  <a href="#" class="btn-pill-action">Quản lý khóa học</a>
+                <div class="mt-auto pt-2 d-flex gap-2">
+                  <a href="{% url 'course_detail_instructor' course.id %}" class="btn btn-primary btn-sm rounded-pill flex-grow-1 py-2">Quản lý khóa học</a>
+                  
+                  <!-- Form Xóa Khóa học chuẩn POST kèm thông báo xác nhận khớp giao diện -->
+                  <form action="{% url 'delete_course' course.id %}" method="POST" class="d-inline" onsubmit="return confirm('Cảnh báo: Xóa khóa học này sẽ đồng thời xóa toàn bộ chương và bài học bên trong. Bạn có chắc chắn muốn xóa?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2" title="Xóa khóa học">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -128,7 +137,7 @@
             <i class="bi bi-journal-x fs-1 text-muted mb-3 d-block"></i>
             <h5 class="fw-bold text-secondary">Chưa có khóa học nào</h5>
             <p class="text-muted small mb-3">Bạn chưa đăng tải khóa học nào lên hệ thống.</p>
-            <a href="#" class="btn btn-primary rounded-pill btn-sm px-4">Tạo khóa học ngay</a>
+            <a href="{% url 'add_course' %}" class="btn btn-primary rounded-pill btn-sm px-4">Tạo khóa học ngay</a>
           </div>
         {% endfor %}
       </div>

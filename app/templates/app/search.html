@@ -1,50 +1,108 @@
 {% extends "app/base.html" %} 
 {% load static %}
 
-{% block title %}Tất cả khóa học - PTIT24{% endblock title %}
+{% block title %}Tìm kiếm khóa học - PTIT24{% endblock title %}
 
 {% block courses %}
-<div class="bg-light py-4 border-bottom">
+<!-- Link CSS Khóa học Midnight Tech -->
+<link rel="stylesheet" href="{% static 'app/css/courses.css' %}" />
+
+<div class="courses-header-banner">
   <div class="container">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
       <div>
-        <h2 class="fw-bold mb-1">Kết quả tìm kiếm cho khóa học {{search_query}}  </h2>
+        <span class="courses-badge">
+          <i class="bi bi-search"></i> Kết quả tìm kiếm
+        </span>
+        <h2 class="courses-title">Kết quả: <span style="color: #60a5fa;">"{{ search_query }}"</span></h2>
+        <p class="courses-desc">Tìm thấy {{ matching_courses|length }} khóa học phù hợp.</p>
       </div>
-      <!-- Thanh tìm kiếm & Sắp xếp -->
-      <div class="d-flex align-items-center gap-2">
-        <select class="form-select w-auto">
-          <option selected>Sắp xếp: Mới nhất</option>
-          <option value="3">Đánh giá cao nhất</option>
-        </select>
-      </div>
+
+      <form method="get" action="{% url 'search' %}" class="row g-2 align-items-center">
+        <div class="col-12 col-md-auto">
+          <input type="search" name="q" value="{{ search_query }}" class="form-control courses-sort-select"
+                 placeholder="Tìm khóa học, giảng viên...">
+        </div>
+        <div class="col-6 col-md-auto">
+          <select name="instructor" class="form-select courses-sort-select">
+            <option value="">Tất cả giảng viên</option>
+            {% for instructor in instructors %}
+              <option value="{{ instructor.id }}" {% if selected_instructor == instructor.id|stringformat:"s" %}selected{% endif %}>
+                {{ instructor.get_full_name|default:instructor.username }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-6 col-md-auto">
+          <select name="sort" class="form-select courses-sort-select">
+            <option value="newest" {% if sort_by == "newest" %}selected{% endif %}>Mới nhất</option>
+            <option value="oldest" {% if sort_by == "oldest" %}selected{% endif %}>Cũ nhất</option>
+            <option value="title" {% if sort_by == "title" %}selected{% endif %}>Tên A–Z</option>
+            <option value="popular" {% if sort_by == "popular" %}selected{% endif %}>Nhiều học viên</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-auto">
+          <button type="submit" class="btn btn-primary rounded-pill w-100">Tìm khóa học</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 
 <div class="container py-5">
   <div class="row g-4">
-      {% for course in matching_courses %}
-    <!-- Khóa học 1 -->
+    {% for course in matching_courses %}
     <div class="col-12 col-md-6 col-lg-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="position-relative">
-          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600" class="card-img-top" alt="Python" style="height: 190px; object-fit: cover;" />
+      <div class="course-card-item">
+        <div class="course-thumb-wrap">
+          {% if course.thumbnail %}
+            <img
+              src="{{ course.thumbnail.url }}"
+              alt="{{ course.title }}"
+              class="course-thumbnail-image"
+            />
+            <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+          {% else %}
+            <div class="course-image-fallback"><i class="bi bi-book-half"></i></div>
+          {% endif %}
+          <span class="course-tag-pill">PTIT Course</span>
         </div>
-        <div class="card-body p-4 d-flex flex-column justify-content-between">
+
+        <div class="course-content">
           <div>
-            <h5 class="fw-bold card-title mb-2 fs-6">{{course.title}}</h5>
-            <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
-              <i class="bi bi-person-circle"></i> {{course.instructor.last_name}} {{course.instructor.first_name}}
+            <h5 class="course-name" title="{{ course.title }}">{{ course.title }}</h5>
+            <div class="course-author">
+              <i class="bi bi-person-circle"></i>
+              <span>
+                {% if course.instructor %}
+                  {{ course.instructor.get_full_name|default:course.instructor.username }}
+                {% else %}
+                  Giảng viên PTIT
+                {% endif %}
+              </span>
             </div>
           </div>
-          <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-            <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">Xem chi tiết</a>
+
+          <div class="course-bottom-action">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 0.725rem;">
+              <i class="bi bi-people-fill me-1"></i>{{ course.enrollment_count }} học viên
+            </span>
+            <a href="{% url 'detail-course' %}?id={{ course.id }}" class="btn-course-action">
+              Xem chi tiết <i class="bi bi-chevron-right" style="font-size: 0.75rem;"></i>
+            </a>
           </div>
         </div>
       </div>
     </div>
-{% endfor %}
-
+    {% empty %}
+    <div class="col-12 text-center py-5">
+      <i class="bi bi-search fs-1 text-muted d-block mb-3"></i>
+      <p class="text-muted fs-5">Không tìm thấy khóa học nào phù hợp với từ khóa "{{ search_query }}".</p>
+      <a href="{% url 'courses' %}" class="btn btn-primary rounded-pill px-4 mt-2" style="background: linear-gradient(135deg, #2563eb, #3b82f6); border: none;">
+        Xem tất cả khóa học
+      </a>
+    </div>
+    {% endfor %}
   </div>
 </div>
 {% endblock courses %}

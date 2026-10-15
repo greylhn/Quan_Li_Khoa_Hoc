@@ -1,0 +1,171 @@
+{% extends 'app/base_instructor.html' %}
+
+{% block title %}Quản lý bài tập - PTIT24{% endblock %}
+
+{% block page_title %}Quản lý bài tập{% endblock %}
+
+{% block extra_css %}
+<style>
+    .teacher-assignments-shell {
+        background: transparent;
+    }
+    .teacher-assignments-shell .card,
+    .teacher-assignments-shell .table,
+    .teacher-assignments-shell .form-control,
+    .teacher-assignments-shell .form-select,
+    .teacher-assignments-shell .input-group-text,
+    .teacher-assignments-shell .text-muted,
+    .teacher-assignments-shell .text-secondary,
+    .teacher-assignments-shell .text-dark,
+    .teacher-assignments-shell h4,
+    .teacher-assignments-shell h6,
+    .teacher-assignments-shell td,
+    .teacher-assignments-shell th {
+        color: #f8fafc !important;
+    }
+    .teacher-assignments-shell .card {
+        background: linear-gradient(180deg, rgba(10, 16, 28, 0.98), rgba(15, 23, 42, 0.96)) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    }
+    .teacher-assignments-shell .table thead th {
+        background: rgba(15, 23, 42, 0.9) !important;
+        border-color: rgba(148, 163, 184, 0.2) !important;
+        color: #cbd5e1 !important;
+    }
+    .teacher-assignments-shell .table td {
+        background: transparent !important;
+        border-color: rgba(148, 163, 184, 0.2) !important;
+    }
+    .teacher-assignments-shell .form-control,
+    .teacher-assignments-shell .form-select,
+    .teacher-assignments-shell .input-group-text {
+        background: rgba(15, 23, 42, 0.78) !important;
+        border: 1px solid rgba(148, 163, 184, 0.22) !important;
+    }
+</style>
+{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid p-0 teacher-assignments-shell">
+    
+    <!-- Tiêu đề trang & Nút Tạo bài tập -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">Quản lý bài tập</h4>
+            <p class="text-muted small mb-0">Tạo, theo dõi và quản lý thời hạn nộp bài tập của học viên.</p>
+        </div>
+        <!-- Nút Tạo bài tập -->
+        <a href="#" class="btn btn-primary rounded-3 px-3 py-2 fw-medium d-flex align-items-center gap-2 shadow-sm text-decoration-none">
+            <i class="bi bi-plus-lg"></i> Tạo bài tập
+        </a>
+    </div>
+
+    <!-- Thanh tìm kiếm và bộ lọc chuẩn mẫu -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <form method="GET" action="" class="row g-3 align-items-center">
+            <!-- Ô tìm kiếm bài tập -->
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0 ps-3 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        name="q" 
+                        value="{{ search_query }}" 
+                        class="form-control bg-light border-0 py-2 small" 
+                        placeholder="Tìm kiếm bài tập..."
+                    >
+                </div>
+            </div>
+
+            <!-- Lọc theo khóa học -->
+            <div class="col-md-4">
+                <select name="course" class="form-select bg-light border-0 py-2 small text-secondary" onchange="this.form.submit()">
+                    <option value="">Tất cả khóa học</option>
+                    {% for c in my_courses %}
+                    <option value="{{ c.id }}" {% if selected_course == c.id|stringformat:"s" %}selected{% endif %}>{{ c.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Lọc theo trạng thái -->
+            <div class="col-md-3">
+                <select name="status" class="form-select bg-light border-0 py-2 small text-secondary" onchange="this.form.submit()">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Đang diễn ra</option>
+                    <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Đã kết thúc</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bảng danh sách bài tập chuẩn khung mẫu bài giảng -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="py-3 ps-4" style="width: 60px;">STT</th>
+                        <th class="py-3">Tên bài tập</th>
+                        <th class="py-3">Khóa học</th>
+                        <th class="py-3">Hạn nộp</th>
+                        <th class="py-3">Số đã nộp</th>
+                        <th class="py-3">Trạng thái</th>
+                        <th class="py-3 text-end pe-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in assignments %}
+                    <tr>
+                        <td class="ps-4 fw-medium text-secondary">{{ forloop.counter }}</td>
+                        <td>
+                            <h6 class="fw-bold text-dark mb-0 fs-6">{{ item.title }}</h6>
+                        </td>
+                        <td>
+                            <span class="text-secondary small fw-medium">{{ item.course.title }}</span>
+                        </td>
+                        <td class="small text-muted">
+                            {% if item.deadline %}
+                                {{ item.deadline|date:"d/m/Y H:i" }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border px-2 py-1">-- / --</span>
+                        </td>
+                        <td>
+                            {% if item.status == 'active' %}
+                                <span class="badge bg-warning bg-opacity-10 text-warning px-2.5 py-1.5 rounded-pill fw-normal small">Đang diễn ra</span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5 rounded-pill fw-normal small">Đã kết thúc</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <!-- Nút Xem chi tiết / Chấm bài -->
+                                <a href="#" class="btn btn-sm rounded-circle p-2 shadow-sm text-decoration-none" style="background-color: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35);" title="Chi tiết bài tập">
+                                    <i class="bi bi-eye fs-6"></i>
+                                </a>
+                                <!-- Nút Xóa bài tập -->
+                                <a href="#" class="btn btn-light btn-sm rounded-circle p-2 shadow-sm text-danger text-decoration-none" title="Xóa bài tập" onclick="return confirm('Bạn có chắc chắn muốn xóa bài tập này?');">
+                                    <i class="bi bi-trash fs-6"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted small">
+                            Chưa có bài tập nào được tạo trong hệ thống.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

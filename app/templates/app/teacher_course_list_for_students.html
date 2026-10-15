@@ -1,0 +1,40 @@
+{% extends 'app/base_instructor.html' %}
+{% load static %}
+
+{% block title %}Quản lý học viên theo khóa học - PTIT24{% endblock %}
+{% block page_title %}Chọn khóa học để xem danh sách học viên{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid px-0">
+    <div class="row g-4">
+        {% for course in courses %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden bg-white">
+                {% if course.thumbnail %}
+                    <div class="course-image-frame">
+                        <img src="{{ course.thumbnail.url }}" class="course-thumbnail-image" alt="{{ course.title }}">
+                        <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+                    </div>
+                {% else %}
+                    <div class="course-image-frame"><div class="course-image-fallback"><i class="bi bi-book-half"></i></div></div>
+                {% endif %}
+                <div class="card-body d-flex flex-column p-4">
+                    <h5 class="fw-bold text-dark mb-2">{{ course.title }}</h5>
+                    <p class="text-muted small mb-4 flex-grow-1">{{ course.description|default:"Chưa có mô tả cho khóa học này."|truncatechars:80 }}</p>
+                    
+                    <a href="{% url 'course_students_detail' course.id %}" class="btn btn-primary rounded-pill w-100 py-2">
+                        <i class="bi bi-people-fill me-2"></i> Xem danh sách học viên
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+                <p class="text-muted mb-0">Bạn chưa có khóa học nào để quản lý học viên.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

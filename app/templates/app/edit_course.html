@@ -1,0 +1,122 @@
+{% extends 'app/base_instructor.html' %}
+{% load static %}
+
+{% block title %}Chỉnh sửa khóa học - {{ course.title }}{% endblock %}
+
+{% block page_title %}Chỉnh sửa khóa học{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-course-shell {
+        background: transparent;
+    }
+    .edit-course-shell .card,
+    .edit-course-shell .card-body,
+    .edit-course-shell .form-label,
+    .edit-course-shell .form-control,
+    .edit-course-shell .form-text,
+    .edit-course-shell .text-muted,
+    .edit-course-shell .text-dark,
+    .edit-course-shell h3,
+    .edit-course-shell label,
+    .edit-course-shell p,
+    .edit-course-shell span {
+        color: #f8fafc !important;
+    }
+    .edit-course-shell .card {
+        background: linear-gradient(180deg, rgba(10, 16, 28, 0.98), rgba(15, 23, 42, 0.96)) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    }
+    .edit-course-shell .form-control,
+    .edit-course-shell .form-select,
+    .edit-course-shell textarea {
+        background: rgba(15, 23, 42, 0.78) !important;
+        border: 1px solid rgba(148, 163, 184, 0.22) !important;
+        color: #f8fafc !important;
+    }
+</style>
+{% endblock %}
+
+{% block instructor_content %}
+<div class="container-fluid px-0 edit-course-shell">
+
+    <!-- Header Tiêu đề & Nút quay lại -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Chỉnh sửa thông tin khóa học</h3>
+            <p class="text-muted small mb-0">Cập nhật tiêu đề, mô tả và hình ảnh đại diện cho khóa học này.</p>
+        </div>
+        <a href="{% url 'teacher_courses' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <!-- Thông báo lỗi / thành công (nếu có) -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Form Cập nhật Khóa học -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <form method="POST" enctype="multipart/form-data" class="needs-validation">
+            {% csrf_token %}
+
+            <!-- Tên khóa học -->
+            <div class="mb-4">
+                <label for="title" class="form-label fw-semibold text-dark">Tên khóa học <span class="text-danger">*</span></label>
+                <input type="text" name="title" id="title" class="form-control rounded-3 py-2 shadow-none" value="{{ course.title }}" placeholder="Nhập tên khóa học..." required>
+            </div>
+
+            <!-- Mô tả khóa học -->
+            <div class="mb-4">
+                <label for="description" class="form-label fw-semibold text-dark">Mô tả khóa học <span class="text-danger">*</span></label>
+                <textarea name="description" id="description" rows="5" class="form-control rounded-3 shadow-none" placeholder="Nhập mô tả khóa học..." required>{{ course.description }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label for="course-status" class="form-label fw-semibold text-dark">Quyền hiển thị</label>
+                <select name="status" id="course-status" class="form-select rounded-3 shadow-none">
+                    <option value="published" {% if course.ished %}selected{% endif %}>Công khai với học viên</option>
+                    <option value="draft" {% if not course.ished %}selected{% endif %}>Riêng tư — chỉ giảng viên quản lý</option>
+                </select>
+                <small class="form-text text-muted">Khóa học riêng tư bị ẩn khỏi học viên và không thể đăng ký hoặc truy cập học.</small>
+            </div>
+
+            <!-- Ảnh đại diện (Thumbnail) -->
+            <div class="mb-4">
+                <label for="thumbnail" class="form-label fw-semibold text-dark">Ảnh đại diện (Thumbnail)</label>
+                
+                {% if course.thumbnail %}
+                    <div class="mb-2">
+                        <p class="text-muted small mb-1">Ảnh hiện tại:</p>
+                        <div class="course-image-frame course-image-frame--preview">
+                            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-thumbnail-image rounded-3">
+                            <div class="course-image-fallback" hidden><i class="bi bi-book-half"></i></div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <input type="file" name="thumbnail" id="thumbnail" class="form-control rounded-3 shadow-none" accept="image/*">
+                <small class="text-muted">Chọn ảnh mới nếu bạn muốn thay đổi ảnh đại diện khóa học.</small>
+            </div>
+
+            <!-- Các nút Lưu / Hủy -->
+            <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                <a href="{% url 'teacher_courses' %}" class="btn btn-light rounded-3 px-4 py-2 text-secondary fw-semibold">
+                    Hủy bỏ
+                </a>
+                <button type="submit" class="btn btn-primary rounded-3 px-4 py-2 fw-semibold shadow-sm">
+                    <i class="bi bi-check-lg me-1"></i> Lưu thay đổi
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

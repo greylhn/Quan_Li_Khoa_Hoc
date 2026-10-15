@@ -6,21 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
 // Chức năng Xử lý Ẩn / Hiện Mật khẩu
 const passwordInput = document.getElementById('password');
 const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-const eyeIcon = document.getElementById('eyeIcon');
 
-if (togglePasswordBtn && passwordInput && eyeIcon) {
+if (togglePasswordBtn && passwordInput) {
   togglePasswordBtn.addEventListener('click', () => {
-    const isPassword = passwordInput.getAttribute('type') === 'password';
-    
-    if (isPassword) {
-      passwordInput.setAttribute('type', 'text');
-      eyeIcon.setAttribute('data-lucide', 'eye-off');
-    } else {
-      passwordInput.setAttribute('type', 'password');
-      eyeIcon.setAttribute('data-lucide', 'eye');
+    const isPassword = passwordInput.type === 'password';
+
+    passwordInput.type = isPassword ? 'text' : 'password';
+    togglePasswordBtn.setAttribute(
+      'aria-label',
+      isPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'
+    );
+    togglePasswordBtn.innerHTML = isPassword
+      ? '<i data-lucide="eye-off" id="eyeIcon"></i>'
+      : '<i data-lucide="eye" id="eyeIcon"></i>';
+
+    if (window.lucide) {
+      lucide.createIcons();
     }
-    
-    lucide.createIcons();
   });
 }
   // Giả lập gửi thông tin lên backend/API

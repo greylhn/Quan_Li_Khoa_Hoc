@@ -1,0 +1,436 @@
+{% extends "app/base_admin.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard - PTIT24{% endblock title %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-chart-wrap {
+        position: relative;
+        min-height: 280px;
+    }
+    .admin-stat-label {
+        color: #94a3b8;
+        font-size: .8rem;
+    }
+    .admin-activity-item + .admin-activity-item,
+    .admin-popular-row + .admin-popular-row {
+        border-top: 1px solid rgba(255,255,255,.07);
+    }
+</style>
+{% endblock %}
+
+{% block admin %}
+
+<!-- HEADER -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <h3 class="fw-bold mb-1" style="color:#f1f5f9;">Admin Dashboard</h3>
+        <p class="mb-0" style="color:#94a3b8;">Xin chào, <strong style="color:#60a5fa;">{{ user.get_full_name|default:user.username }}</strong></p>
+    </div>
+    <a href="{% url 'create_instructor' %}" class="btn btn-primary rounded-3 d-flex align-items-center gap-2">
+        <i class="bi bi-person-plus-fill"></i> Tạo giảng viên
+    </a>
+</div>
+
+
+<!-- =============================== -->
+<!-- THỐNG KÊ -->
+<!-- =============================== -->
+
+<div class="row g-4 mb-4">
+
+    <!-- STUDENTS -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-2 small text-muted">Học viên</p>
+                        <h2 class="fw-bold mb-0">{{ total_students }}</h2>
+                    </div>
+                    <div class="rounded-3 p-3" style="background:rgba(59,130,246,0.15);">
+                        <i class="bi bi-people fs-4 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INSTRUCTORS -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-2 small text-muted">Giảng viên</p>
+                        <h2 class="fw-bold mb-0">{{ total_instructors }}</h2>
+                    </div>
+                    <div class="rounded-3 p-3" style="background:rgba(16,185,129,0.15);">
+                        <i class="bi bi-person-video3 fs-4" style="color:#34d399;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COURSES -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-2 small text-muted">Khóa học</p>
+                        <h2 class="fw-bold mb-0">{{ total_courses }}</h2>
+                    </div>
+                    <div class="rounded-3 p-3" style="background:rgba(245,158,11,0.15);">
+                        <i class="bi bi-journal-bookmark-fill fs-4" style="color:#fbbf24;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENROLLMENTS -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-2 small text-muted">Lượt đăng ký</p>
+                        <h2 class="fw-bold mb-0">{{ total_enrollments }}</h2>
+                        <span class="admin-stat-label">Toàn thời gian</span>
+                    </div>
+                    <div class="rounded-3 p-3" style="background:rgba(139,92,246,0.15);">
+                        <i class="bi bi-person-check-fill fs-4" style="color:#a78bfa;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- XU HƯỚNG ĐĂNG KÝ VÀ TÌNH TRẠNG HỆ THỐNG -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-8">
+        <div class="card h-100">
+            <div class="card-header border-0 p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h5 class="fw-bold mb-1">Xu hướng đăng ký khóa học</h5>
+                        <p class="text-muted small mb-0">
+                            {{ period_enrollments }} lượt đăng ký trong kỳ
+                            {% if enrollment_change > 0 %}
+                                <span class="text-success ms-1"><i class="bi bi-arrow-up-right"></i> {{ enrollment_change }}%</span>
+                            {% elif enrollment_change < 0 %}
+                                <span class="text-danger ms-1"><i class="bi bi-arrow-down-right"></i> {{ enrollment_change|cut:"-" }}%</span>
+                            {% else %}
+                                <span class="text-muted ms-1">Không đổi</span>
+                            {% endif %}
+                            so với kỳ trước
+                        </p>
+                    </div>
+                    <form method="get" class="d-flex align-items-center gap-2">
+                        <label for="dashboard-period" class="text-muted small">Khoảng thời gian</label>
+                        <select id="dashboard-period" name="period" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="7d" {% if timeframe == '7d' %}selected{% endif %}>7 ngày</option>
+                            <option value="30d" {% if timeframe == '30d' %}selected{% endif %}>30 ngày</option>
+                            <option value="12m" {% if timeframe == '12m' %}selected{% endif %}>12 tháng</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+                <div class="admin-chart-wrap">
+                    <canvas id="enrollmentTrendChart" aria-label="Biểu đồ lượt đăng ký khóa học"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="card h-100">
+            <div class="card-header border-0 p-4">
+                <h5 class="fw-bold mb-0">Tình trạng hệ thống</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                    <span class="text-muted">Tài khoản hoạt động</span>
+                    <span class="badge bg-success-subtle rounded-pill">{{ active_users }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                    <span class="text-muted">Tài khoản đã khóa</span>
+                    <span class="badge bg-danger-subtle rounded-pill">{{ inactive_users }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                    <span class="text-muted">Khóa học đã xuất bản</span>
+                    <span class="badge bg-primary-subtle rounded-pill">{{ published_courses }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-3">
+                    <span class="text-muted">Khóa học chưa xuất bản</span>
+                    <span class="badge bg-warning-subtle rounded-pill">{{ unpublished_courses }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KHÓA HỌC NỔI BẬT VÀ HOẠT ĐỘNG GẦN ĐÂY -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-7">
+        <div class="card h-100">
+            <div class="card-header border-0 p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-1">Khóa học nổi bật</h5>
+                    <p class="text-muted small mb-0">Xếp theo số học viên đăng ký</p>
+                </div>
+                <a href="{% url 'admin_courses' %}" class="btn btn-outline-primary btn-sm">Tất cả khóa học</a>
+            </div>
+            <div class="card-body p-0">
+                {% for course in popular_courses %}
+                <div class="admin-popular-row d-flex align-items-center gap-3 p-3">
+                    <span class="badge bg-primary-subtle rounded-circle">{{ forloop.counter }}</span>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <div class="fw-semibold text-truncate">{{ course.title }}</div>
+                        <div class="text-muted small text-truncate">
+                            {{ course.instructor.get_full_name|default:course.instructor.username }}
+                        </div>
+                    </div>
+                    <span class="badge bg-info-subtle rounded-pill">{{ course.student_count }} học viên</span>
+                    {% if course.ished %}
+                        <span class="badge bg-success-subtle rounded-pill">Đã xuất bản</span>
+                    {% else %}
+                        <span class="badge bg-warning-subtle rounded-pill">Bản nháp</span>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-5">Chưa có khóa học.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+        <div class="card h-100">
+            <div class="card-header border-0 p-4">
+                <h5 class="fw-bold mb-1">Hoạt động gần đây</h5>
+                <p class="text-muted small mb-0">Trong khoảng thời gian đã chọn</p>
+            </div>
+            <div class="card-body p-0">
+                {% for activity in recent_activity %}
+                <div class="admin-activity-item d-flex align-items-start gap-3 p-3">
+                    <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-{{ activity.color }}-subtle text-{{ activity.color }}" style="width:36px;height:36px;flex:0 0 36px;">
+                        <i class="bi {{ activity.icon }}"></i>
+                    </span>
+                    <div class="flex-grow-1 min-width-0">
+                        <div class="small"><strong>{{ activity.title }}</strong> {{ activity.description }}</div>
+                        <time class="text-muted" style="font-size:.75rem">{{ activity.created_at|date:"d/m/Y H:i" }}</time>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-5">Chưa có hoạt động trong khoảng thời gian này.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =============================== -->
+<!-- MENU QUẢN LÝ NHANH -->
+<!-- =============================== -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-12 col-lg-3">
+        <a href="{% url 'create_instructor' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="mb-3 d-inline-flex p-3 rounded-3" style="background:rgba(59,130,246,0.15);">
+                        <i class="bi bi-person-plus-fill fs-3 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Tạo giảng viên</h5>
+                    <p class="text-muted small mb-0">Tạo tài khoản cho giảng viên mới.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-lg-3">
+        <a href="{% url 'admin_students' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="mb-3 d-inline-flex p-3 rounded-3" style="background:rgba(16,185,129,0.15);">
+                        <i class="bi bi-people-fill fs-3" style="color:#34d399;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Quản lý học viên</h5>
+                    <p class="text-muted small mb-0">Xem và quản lý tài khoản học viên.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-lg-3">
+        <a href="{% url 'admin_instructors' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="mb-3 d-inline-flex p-3 rounded-3" style="background:rgba(245,158,11,0.15);">
+                        <i class="bi bi-person-video3 fs-3" style="color:#fbbf24;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Quản lý giảng viên</h5>
+                    <p class="text-muted small mb-0">Xem danh sách và quản lý giảng viên.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-lg-3">
+        <a href="{% url 'admin_courses' %}" class="text-decoration-none">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="mb-3 d-inline-flex p-3 rounded-3" style="background:rgba(139,92,246,0.15);">
+                        <i class="bi bi-journal-text fs-3" style="color:#a78bfa;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Quản lý khóa học</h5>
+                    <p class="text-muted small mb-0">Xem và quản lý các khóa học.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>
+
+
+<!-- =============================== -->
+<!-- DANH SÁCH GIẢNG VIÊN + KHÓA HỌC -->
+<!-- =============================== -->
+
+<div class="row g-4">
+
+    <!-- GIẢNG VIÊN -->
+    <div class="col-12 col-xl-6">
+        <div class="card">
+            <div class="card-header border-0 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Giảng viên mới</h5>
+                    <span class="badge rounded-pill px-3 py-2" style="background:rgba(59,130,246,0.2);color:#93c5fd;">{{ total_instructors }}</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% for instructor in instructors %}
+                <div class="d-flex align-items-center gap-3 p-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                         style="width:42px;height:42px;background:rgba(59,130,246,0.15);color:#93c5fd;font-size:15px;flex-shrink:0;">
+                        {{ instructor.get_full_name|default:instructor.username|slice:":1"|upper }}
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <h6 class="fw-semibold mb-0 text-truncate">{{ instructor.get_full_name|default:instructor.username }}</h6>
+                        <p class="text-muted small mb-0 text-truncate">{{ instructor.email }}</p>
+                    </div>
+                    <span class="badge rounded-pill px-3" style="background:rgba(16,185,129,0.15);color:#34d399;">Giảng viên</span>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-person-x display-5 d-block mb-2 opacity-25"></i>
+                    Chưa có giảng viên.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- KHÓA HỌC -->
+    <div class="col-12 col-xl-6">
+        <div class="card">
+            <div class="card-header border-0 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Khóa học mới</h5>
+                    <span class="badge rounded-pill px-3 py-2" style="background:rgba(245,158,11,0.2);color:#fbbf24;">{{ total_courses }}</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% for course in recent_courses %}
+                <div class="d-flex align-items-center gap-3 p-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center"
+                         style="width:48px;height:40px;background:rgba(245,158,11,0.12);flex-shrink:0;">
+                        <i class="bi bi-journal-bookmark" style="color:#fbbf24;"></i>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <h6 class="fw-semibold mb-0 text-truncate">{{ course.title }}</h6>
+                        <p class="text-muted small mb-0">
+                            {% if course.instructor %}{{ course.instructor.get_full_name|default:course.instructor.username }}{% else %}—{% endif %}
+                        </p>
+                    </div>
+                    <span class="badge rounded-pill px-3" style="background:rgba(59,130,246,0.15);color:#93c5fd;">Khóa học</span>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-journal-x display-5 d-block mb-2 opacity-25"></i>
+                    Chưa có khóa học.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock admin %}
+
+{% block extra_js %}
+{{ chart_labels|json_script:"enrollment-chart-labels" }}
+{{ chart_values|json_script:"enrollment-chart-values" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartLabels = JSON.parse(document.getElementById("enrollment-chart-labels").textContent);
+    const chartValues = JSON.parse(document.getElementById("enrollment-chart-values").textContent);
+    const chartCanvas = document.getElementById("enrollmentTrendChart");
+
+    new Chart(chartCanvas, {
+        type: "line",
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: "Lượt đăng ký",
+                data: chartValues,
+                borderColor: "#60a5fa",
+                backgroundColor: "rgba(59, 130, 246, 0.16)",
+                pointBackgroundColor: "#93c5fd",
+                pointBorderColor: "#0f172a",
+                pointRadius: chartLabels.length > 12 ? 2 : 4,
+                pointHoverRadius: 6,
+                borderWidth: 2,
+                fill: true,
+                tension: 0.35
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: "#0f172a",
+                    titleColor: "#f8fafc",
+                    bodyColor: "#cbd5e1",
+                    borderColor: "rgba(148,163,184,.25)",
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: "#94a3b8", maxTicksLimit: 10 },
+                    grid: { color: "rgba(148,163,184,.08)" }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: "#94a3b8", precision: 0 },
+                    grid: { color: "rgba(148,163,184,.1)" }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
